@@ -1,55 +1,69 @@
 const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
-  const { amount, currency, reference } = req.body;
-
-  const client_id = process.env.AIRWALLEX_CLIENT_ID;
-  const api_key = process.env.AIRWALLEX_API_KEY;
-
   try {
-    // Step 1: Get a bearer token
-    const authResponse = await fetch('https://api.airwallex.com/api/v1/authentication/login', {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    const { amount, currency, reference } = req.body;
+
+    const client_id = process.env.AIRWALLEX_CLIENT_ID;
+    const api_key = process.env.AIRWALLEX_API_KEY;
+    const base_url = process.env.AIRWALLEX_API_BASE_URL || 'https://api.airwallex.com';
+
+    if (!client_id || !api_key) {
+      return res.status(500).json({ error: 'Airwallex credentials not found in environment' });
+    }
+
+    // 🔐 Step 1: Get Bearer Token
+    const authResponse = await fetch(`${base_url}/api/v1/authentication/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ client_id, api_key })
+        'Content-Type': 'application/json',
+        'x-client-id': client_id,
+        'x-api-key': api_key
+      }
     });
 
     const authData = await authResponse.json();
 
-    if (!authData.token) {
-      console.error("Authentication failed:", authData);
-      return res.status(401).json({ error: 'Failed to authenticate with Airwallex' });
+    if (!authResponse.ok) {
+      return res.status(authResponse.status).json({
+        error: 'Failed to authenticate with Airwallex',
+        details: authData
+      });
     }
 
-    // Step 2: Use the token to create a payment intent
     const token = authData.token;
 
-    const intentResponse = await fetch('https://api.airwallex.com/api/v1/pa/payment_intents/create', {
+    // 💳 Step 2: Create Payment Intent
+    const paymentResponse = await fetch(`${base_url}/api/v1/pa/payment_intents/create`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
+        request_id: `req_${Date.now()}`,
         amount,
         currency,
         merchant_order_id: reference
       })
     });
 
-    const intentData = await intentResponse.json();
+    const paymentData = await paymentResponse.json();
 
-    if (!intentResponse.ok) {
-      console.error("Payment intent error:", intentData);
-      return res.status(500).json({ error: 'Payment intent creation failed', details: intentData });
+    if (!paymentResponse.ok) {
+      return res.status(paymentResponse.status).json({
+        error: 'Failed to create payment intent',
+        details: paymentData
+      });
     }
 
-    return res.status(200).json(intentData);
-
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    return res.status(500).json({ error: 'Unexpected server error' });
+    return res.status(200).json(paymentData);
+  } catch (error) {
+    console.error('Server error:', error);
+    return res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
