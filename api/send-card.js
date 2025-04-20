@@ -9,36 +9,52 @@ module.exports = async (req, res) => {
 
   const { toEmail, subject, templateName, customMessage } = req.body;
 
-  if (!toEmail || !subject || !templateName || !customMessage) {
+  if (!toEmail || !subject || !templateName) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  try {
-    const templatePath = path.join(process.cwd(), 'assets', 'templates', templateName);
-    const rawHtml = fs.readFileSync(templatePath, 'utf8');
-    const html = rawHtml.replace('{{message}}', customMessage);
+  // Load the HTML template
+  const templatePath = path.join(__dirname, '..', 'assets', 'templates', templateName);
+  let htmlContent;
 
-    // Replace this with your actual email-sending logic via Supabase/SendGrid
-    const emailResponse = await fetch('https://api.supabase.com/fake-email-endpoint', {
+  try {
+    htmlContent = fs.readFileSync(templatePath, 'utf-8');
+  } catch (err) {
+    return res.status(404).json({ error: `Template "${templateName}" not found` });
+  }
+
+  // Inject message if needed
+  const finalHtml = htmlContent.replace('{{message}}', customMessage || '');
+
+  // Send via Resend
+  try {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+
+    const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
+        Authorization: `Bearer ${resendApiKey}`,
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
       },
       body: JSON.stringify({
+        from: fromEmail,
         to: toEmail,
-        subject,
-        html,
+        subject: subject,
+        html: finalHtml,
       }),
     });
 
-    if (!emailResponse.ok) {
-      throw new Error(`Email API failed: ${emailResponse.status}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Resend error:', data);
+      return res.status(500).json({ error: 'Failed to send email', details: data });
     }
 
-    res.status(200).json({ message: 'Email sent successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to send email' });
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return res.status(500).json({ error: 'Server error sending email' });
   }
 };
