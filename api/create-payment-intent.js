@@ -1,55 +1,40 @@
-// File: api/create-payment-intent.js
+const fetch = require('node-fetch');
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+module.exports = async (req, res) => {
+  const { amount, currency, reference } = req.body;
+
+  if (!amount || !currency || !reference) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  const client_id = process.env.AIRWALLEX_CLIENT_ID;
+  const api_key = process.env.AIRWALLEX_API_KEY;
+  const base_url = process.env.AIRWALLEX_API_BASE_URL || "https://api.airwallex.com";
+
+  const authToken = Buffer.from(`${client_id}:${api_key}`).toString('base64');
+
   try {
-    const { amount, currency, reference } = req.body;
-
-    // Step 1: Get a bearer token from Airwallex
-    const authResponse = await fetch(`${process.env.AIRWALLEX_API_BASE_URL}/api/v1/authentication/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: process.env.AIRWALLEX_CLIENT_ID,
-        api_key: process.env.AIRWALLEX_API_KEY
-      })
-    });
-
-    const authData = await authResponse.json();
-
-    if (!authResponse.ok || !authData.token) {
-      throw new Error('Failed to authenticate with Airwallex');
-    }
-
-    const token = authData.token;
-
-    // Step 2: Create payment intent using the bearer token
-    const paymentIntentRes = await fetch(`${process.env.AIRWALLEX_API_BASE_URL}/api/v1/pa/payment_intents/create`, {
+    const response = await fetch(`${base_url}/api/v1/pa/payment_intents/create`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Basic ${authToken}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         amount,
         currency,
-        merchant_order_id: reference,
-        request_id: reference
+        merchant_order_id: reference
       })
     });
 
-    const paymentIntentData = await paymentIntentRes.json();
+    const data = await response.json();
 
-    if (!paymentIntentRes.ok) {
-      throw new Error(paymentIntentData.message || 'Failed to create payment intent');
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.message || "Airwallex error", details: data });
     }
 
-    return res.status(200).json(paymentIntentData);
-  } catch (error) {
-    console.error('Payment intent error:', error);
-    return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  } catch (err) {
+    return res.status(500).json({ error: 'Server error', details: err.message });
   }
-}
+};
