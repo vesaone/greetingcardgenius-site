@@ -1,23 +1,23 @@
+// /api/create-payment-intent.mjs
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const {
+    toEmail,
+    subject,
+    templateName,
+    customMessage,
+    senderName
+  } = req.body;
+
   try {
-    const {
-      toEmail,
-      subject,
-      templateName,
-      customMessage,
-      senderName
-    } = req.body;
-
-    const apiKey = process.env.AIRWALLEX_API_KEY;
-
     const response = await fetch('https://pci-api.airwallex.com/api/v1/pa/payment_intents/create', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`, // ✅ No authToken here
+        'Authorization': `Bearer ${process.env.AIRWALLEX_API_KEY}`, // ✅ correct Bearer token
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -39,13 +39,13 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Airwallex API error:', data);
+      console.error('❌ Airwallex API error:', data);
       return res.status(500).json({ error: data.message || 'Failed to create payment intent' });
     }
 
     return res.status(200).json({ payment_url: data.next_action?.redirect_to_url });
   } catch (err) {
-    console.error('Payment intent error:', err);
+    console.error('❌ Server error:', err);
     return res.status(500).json({ error: 'Server error creating payment intent' });
   }
 }
