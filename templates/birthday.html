@@ -15,11 +15,47 @@
   <img src="/assets/birthday.jpg" alt="Birthday Card Preview" class="w-full max-w-xs mx-auto mb-6 rounded shadow" />
 
   <form method="POST" action="/api/send-card" class="space-y-4">
-    <input type="email" name="email" placeholder="Recipient's Email" required class="w-full border px-4 py-2 rounded" />
-    <input type="hidden" name="template" value="birthday" />
-    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-      Buy & Send – $1.99 AUD
-    </button>
+   <input type="email" id="email" placeholder="Recipient's Email" class="border p-2 rounded w-full max-w-md mx-auto mt-4 block" />
+
+<button onclick="startPayment()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+  Buy & Send – $1.99 AUD
+</button>
+
+<script>
+  async function startPayment() {
+    const email = document.getElementById("email").value;
+    if (!email || !email.includes('@')) {
+      alert("Please enter a valid recipient email.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: 199,
+          currency: "AUD",
+          reference: `birthday-${Date.now()}`
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.next_action?.redirect_to_url) {
+        // Save recipient email to local storage for use after redirect
+        localStorage.setItem("recipient_email", email);
+        window.location.href = data.next_action.redirect_to_url;
+      } else {
+        alert("Failed to create payment intent.");
+      }
+    } catch (err) {
+      alert("Error initiating payment.");
+      console.error(err);
+    }
+  }
+</script>
+
   </form>
 </main>
 

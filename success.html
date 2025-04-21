@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Success – Greeting Card Genius</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="text-center p-10 font-sans">
+  <h1 class="text-3xl font-bold text-green-600 mb-4">🎉 Your card is being sent!</h1>
+  <p class="mb-6">Thanks for your order. The greeting card is now on its way to the recipient's inbox.</p>
+  <a href="/" class="underline text-blue-600 hover:text-blue-800">Return to Home</a>
+
+  <script>
+    const email = localStorage.getItem("recipient_email");
+    if (email) {
+      fetch("/api/send-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          toEmail: email,
+          subject: "🎉 Happy Birthday from GreetingCardGenius!",
+          templateName: "birthday.html",
+          customMessage: "Hope your day is filled with brilliance and joy!"
+        })
+      });
+      localStorage.removeItem("recipient_email");
+    }
+  </script>
+</body>
+</html>
