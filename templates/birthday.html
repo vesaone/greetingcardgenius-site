@@ -5,57 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🎉 Birthday Card</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<!-- Favicon -->
-<link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
-</head>
-
-<!-- Centered Header -->
-<header class="p-6 border-b text-center">
-  <div class="flex flex-col items-center space-y-2">
-    <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow" />
-    <div>
-      <a href="/" class="text-2xl font-bold hover:underline">Greeting Card Genius</a>
-      <p class="text-sm text-gray-600">AI-generated cards for every occasion</p>
-    </div>
-    <nav class="space-x-4 text-sm pt-2">
-  <a href="#" class="hover:underline">Instagram</a>
-  <a href="#" class="hover:underline">Facebook</a>
-  <a href="#" class="hover:underline">Twitter/X</a>
-  <a href="/about.html" class="hover:underline">About</a>
-  <a href="/contact.html" class="hover:underline">Contact</a>
-  <a href="/faq.html" class="hover:underline">FAQ</a>
-</nav>
-
-<a href="/" class="inline-block mb-4 text-sm text-blue-600 hover:underline">
-  ← Back to Templates
-</a>
-
-<body class="bg-white text-gray-800 font-sans">
-
-<main class="max-w-xl mx-auto p-8 text-center">
-  <h1 class="text-2xl font-bold mb-4">🎉 Happy Birthday!</h1>
-  <p class="mb-6">Surprise someone special with a custom birthday greeting.</p>
-
-  <img src="/previews/birthday.jpg" alt="Birthday Card Preview" class="w-full max-w-xs mx-auto mb-6 rounded shadow" />
-
-  <div class="space-y-4">
-    <input type="text" id="senderName" placeholder="Your Name" class="border p-2 rounded w-full max-w-md mx-auto block" />
-    <textarea id="customMessage" placeholder="Optional message to include..." class="border p-2 rounded w-full max-w-md mx-auto block mt-2"></textarea>
-    <input type="email" id="email" placeholder="Recipient's Email" class="border p-2 rounded w-full max-w-md mx-auto block" />
-    
-    <button type="button" onclick="handleBuyAndSend()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-      Buy & Send – $1.99 AUD
-    </button>
-  </div>
-
-  <script>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎉 Birthday Card</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
 </head>
 <body class="bg-white text-gray-800 font-sans">
@@ -79,10 +28,12 @@
   </div>
 </header>
 
+<!-- Back to Templates -->
 <a href="/" class="inline-block mb-4 text-sm text-blue-600 hover:underline text-center w-full">
   ← Back to Templates
 </a>
 
+<!-- Main -->
 <main class="max-w-xl mx-auto p-8 text-center">
   <h1 class="text-2xl font-bold mb-4">🎉 Happy Birthday!</h1>
   <p class="mb-6">Surprise someone special with a custom birthday greeting.</p>
@@ -100,6 +51,7 @@
   </div>
 </main>
 
+<!-- JS Logic -->
 <script>
   async function handleBuyAndPay() {
     const recipientEmail = document.getElementById('email').value.trim();
@@ -139,24 +91,6 @@
     }
   }
 </script>
-
-</body>
-</html>
-oad)
-        });
-
-        const result = await res.json();
-        if (result.success) {
-          alert("✅ Card sent successfully!");
-        } else {
-          alert("⚠️ Error sending card: " + (result.error || "Unknown error"));
-        }
-      } catch (err) {
-        alert("⚠️ Network error: " + err.message);
-      }
-    }
-  </script>
-</main>
 
 </body>
 </html>
