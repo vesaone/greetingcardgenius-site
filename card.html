@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buy a Birthday Card | Greeting Card Genius</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="p-6 border-b text-center">
+    <div class="flex flex-col items-center space-y-2">
+      <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow" />
+      <h1 class="text-2xl font-bold">Buy a Birthday Card</h1>
+      <p class="text-sm text-gray-600">AI-enhanced & email delivered instantly</p>
+    </div>
+  </header>
+
+  <!-- Main Form -->
+  <main class="max-w-md mx-auto p-6">
+    <div class="border rounded p-4 shadow mb-6">
+      <img src="/assets/templates/birthday.jpg" alt="Birthday Card Preview" class="w-full rounded mb-4">
+      <h2 class="text-xl font-bold">🎉 Birthday Card</h2>
+      <p class="text-sm text-gray-600">Price: <strong>$2.99 AUD</strong></p>
+    </div>
+
+    <form id="purchase-form" class="space-y-4">
+      <div>
+        <label for="buyerEmail" class="block text-sm font-medium">Your Email</label>
+        <input type="email" id="buyerEmail" name="buyerEmail" required class="w-full border p-2 rounded">
+      </div>
+      <div>
+        <label for="recipientEmail" class="block text-sm font-medium">Recipient's Email</label>
+        <input type="email" id="recipientEmail" name="recipientEmail" required class="w-full border p-2 rounded">
+      </div>
+      <div>
+        <label for="message" class="block text-sm font-medium">Message (optional)</label>
+        <textarea id="message" name="message" rows="4" class="w-full border p-2 rounded"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition">
+        Proceed to Checkout
+      </button>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-12 p-6 border-t text-center text-sm text-gray-500">
+    &copy; 2025 Greeting Card Genius · Powered by <a href="https://quantumnova.com.au" class="underline hover:text-gray-700">QUANTUMNOVA</a><br />
+    ABN: 43 686 016 526
+    <div class="mt-2 space-x-4">
+      <a href="/terms.html" class="hover:underline">Terms</a>
+      <a href="/privacy.html" class="hover:underline">Privacy</a>
+      <a href="/refund.html" class="hover:underline">Refund</a>
+      <a href="/sitemap.xml" class="hover:underline">Sitemap</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('purchase-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const payload = {
+        buyerEmail: form.buyerEmail.value,
+        recipientEmail: form.recipientEmail.value,
+        message: form.message.value,
+        cardType: "birthday",
+        amount: 299,
+        currency: "AUD"
+      };
+
+      const res = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+      if (res.ok && result?.url) {
+        window.location.href = result.url;
+      } else {
+        alert("Something went wrong. Please try again.");
+        console.error(result);
+      }
+    });
+  </script>
+</body>
+</html>
