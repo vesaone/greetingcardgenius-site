@@ -1,38 +1,27 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>🎉 Birthday Card</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 40px;
-        color: #333;
-      }
-      .card {
-        border: 2px dashed #f59e0b;
-        padding: 30px;
-        border-radius: 12px;
-        background: #fff8e7;
-        max-width: 500px;
-        margin: auto;
-      }
-      .footer {
-        margin-top: 30px;
-        font-style: italic;
-        font-size: 0.9em;
-        color: #888;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>🎉 Happy Birthday!</h1>
-      <p>{{customMessage}}</p>
-      <div class="footer">
-        — Sent with 💌 by {{senderName}} via GreetingCardGenius
-      </div>
-    </div>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎉 Birthday Card</title>
+</head>
+<body style="font-family: sans-serif; background: #1f2937; color: white; text-align: center; padding: 40px;">
+
+  <div style="border: 2px dashed #facc15; padding: 2em; border-radius: 8px; max-width: 500px; margin: auto;">
+    <h1 style="font-size: 2em;">🎉 <span style="color: #60a5fa;">Happy Birthday!</span></h1>
+
+    <!-- ✅ AI Message (always shown) -->
+    <p style="margin-top: 1em; font-size: 1.1em;">
+      Hope your day is filled with brilliance and joy!
+    </p>
+
+    <!-- ✅ Sender's custom message (always shown, even if empty string) -->
+    <p style="margin-top: 1em; font-style: italic; color: #d1d5db;">"{{customMessage}}"</p>
+
+    <!-- ✅ Footer signature -->
+    <p style="margin-top: 2em; font-size: 0.9em; color: #9ca3af;">
+      — Sent with 💌 by {{senderName}} via GreetingCardGenius
+    </p>
+  </div>
+
+</body>
 </html>
