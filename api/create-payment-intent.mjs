@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -14,11 +12,12 @@ export default async function handler(req, res) {
       senderName
     } = req.body;
 
+    const apiKey = process.env.AIRWALLEX_API_KEY;
+
     const response = await fetch('https://pci-api.airwallex.com/api/v1/pa/payment_intents/create', {
       method: 'POST',
       headers: {
-        const authToken = Buffer.from(`${process.env.AIRWALLEX_API_KEY}:`).toString('base64');
-'Authorization': `Basic ${authToken}`
+        'Authorization': `Bearer ${apiKey}`, // ✅ No authToken here
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -36,7 +35,6 @@ export default async function handler(req, res) {
         }
       })
     });
-    
 
     const data = await response.json();
 
