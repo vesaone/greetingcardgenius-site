@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       headers: {
         'Authorization': `Basic ${authToken}`,
         'Content-Type': 'application/json',
-        'x-api-key': process.env.AIRWALLEX_CLIENT_KEY
+        'x-api-key': process.env.AIRWALLEX_CLIENT_ID
       },
       body: JSON.stringify({
         request_id: `req_${Date.now()}`,
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           templateName,
           customMessage,
           senderName
-        }
+        }        
       })
     });
 
