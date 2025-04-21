@@ -1,6 +1,27 @@
-<html>
-  <body style="font-family: sans-serif;">
-    <h1>🎉 Happy Birthday!</h1>
-    <p>{{message}}</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎉 Birthday Card</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800 font-sans">
+
+<main class="max-w-xl mx-auto p-8 text-center">
+  <h1 class="text-2xl font-bold mb-4">🎉 Happy Birthday!</h1>
+  <p class="mb-6">Surprise someone special with a custom birthday greeting.</p>
+
+  <img src="/assets/birthday.jpg" alt="Birthday Card Preview" class="w-full max-w-xs mx-auto mb-6 rounded shadow" />
+
+  <form method="POST" action="/api/send-card" class="space-y-4">
+    <input type="email" name="email" placeholder="Recipient's Email" required class="w-full border px-4 py-2 rounded" />
+    <input type="hidden" name="template" value="birthday" />
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+      Buy & Send – $1.99 AUD
+    </button>
+  </form>
+</main>
+
+</body>
 </html>
