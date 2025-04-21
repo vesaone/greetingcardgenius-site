@@ -22,36 +22,42 @@
 </button>
 
 <script>
-  async function startPayment() {
-    const email = document.getElementById("email").value;
-    if (!email || !email.includes('@')) {
-      alert("Please enter a valid recipient email.");
+  async function handleBuyAndSend() {
+    const recipientEmail = document.getElementById('email').value.trim();
+    const cardType = "Birthday";
+    const subject = "🎉 Happy Birthday from GreetingCardGenius!";
+    const templateName = "birthday.html";
+    const customMessage = "Hope your day is filled with brilliance and joy!";
+
+    if (!recipientEmail) {
+      alert("Please enter a recipient's email.");
       return;
     }
 
+    const payload = {
+      toEmail: recipientEmail,
+      subject,
+      templateName,
+      customMessage
+    };
+
     try {
-      const res = await fetch("/api/create-payment-intent", {
+      const res = await fetch("/api/send-card", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: 199,
-          currency: "AUD",
-          reference: `birthday-${Date.now()}`
-        })
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-
-      if (data.next_action?.redirect_to_url) {
-        // Save recipient email to local storage for use after redirect
-        localStorage.setItem("recipient_email", email);
-        window.location.href = data.next_action.redirect_to_url;
+      const result = await res.json();
+      if (result.success) {
+        alert("✅ Card sent successfully!");
       } else {
-        alert("Failed to create payment intent.");
+        alert("⚠️ Error sending card: " + (result.error || "Unknown error"));
       }
     } catch (err) {
-      alert("Error initiating payment.");
-      console.error(err);
+      alert("⚠️ Network error: " + err.message);
     }
   }
 </script>
