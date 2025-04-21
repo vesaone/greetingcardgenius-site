@@ -17,7 +17,8 @@ export default async function handler(req, res) {
     const response = await fetch('https://pci-api.airwallex.com/api/v1/pa/payment_intents/create', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.AIRWALLEX_API_KEY}`, // ✅ Switch from Basic to Bearer
+        const authToken = Buffer.from(`${process.env.AIRWALLEX_API_KEY}:`).toString('base64');
+'Authorization': `Basic ${authToken}`
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
