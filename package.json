@@ -4,6 +4,7 @@
     "type": "commonjs",
     "dependencies": {
         "node-fetch": "^2.7.0",
+        "puppeteer": "^24.6.1",
         "resend": "^4.3.0"
     },
     "main": "index.js",

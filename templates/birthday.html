@@ -12,57 +12,59 @@
   <h1 class="text-2xl font-bold mb-4">🎉 Happy Birthday!</h1>
   <p class="mb-6">Surprise someone special with a custom birthday greeting.</p>
 
-  <img src="/assets/birthday.jpg" alt="Birthday Card Preview" class="w-full max-w-xs mx-auto mb-6 rounded shadow" />
+  <img src="/previews/birthday.jpg" alt="Birthday Card Preview" class="w-full max-w-xs mx-auto mb-6 rounded shadow" />
 
   <div class="space-y-4">
-  <input type="email" id="email" placeholder="Recipient's Email" class="border p-2 rounded w-full max-w-md mx-auto mt-4 block" />
-  <button type="button" onclick="handleBuyAndSend()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-    Buy & Send – $1.99 AUD
-  </button>
-</div>
+    <input type="text" id="senderName" placeholder="Your Name" class="border p-2 rounded w-full max-w-md mx-auto block" />
+    <textarea id="customMessage" placeholder="Optional message to include..." class="border p-2 rounded w-full max-w-md mx-auto block mt-2"></textarea>
+    <input type="email" id="email" placeholder="Recipient's Email" class="border p-2 rounded w-full max-w-md mx-auto block" />
+    
+    <button type="button" onclick="handleBuyAndSend()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+      Buy & Send – $1.99 AUD
+    </button>
+  </div>
 
-<script>
-  async function handleBuyAndSend() {
-    const recipientEmail = document.getElementById('email').value.trim();
-    const cardType = "Birthday";
-    const subject = "🎉 Happy Birthday from GreetingCardGenius!";
-    const templateName = "birthday.html";
-    const customMessage = "Hope your day is filled with brilliance and joy!";
+  <script>
+    async function handleBuyAndSend() {
+      const recipientEmail = document.getElementById('email').value.trim();
+      const senderName = document.getElementById('senderName').value.trim();
+      const customMessage = document.getElementById('customMessage').value.trim() || "Hope your day is filled with brilliance and joy!";
+      const subject = "🎉 Happy Birthday from GreetingCardGenius!";
+      const templateName = "birthday-card.html";
 
-    if (!recipientEmail) {
-      alert("Please enter a recipient's email.");
-      return;
-    }
-
-    const payload = {
-      toEmail: recipientEmail,
-      subject,
-      templateName,
-      customMessage
-    };
-
-    try {
-      const res = await fetch("/api/send-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await res.json();
-      if (result.success) {
-        alert("✅ Card sent successfully!");
-      } else {
-        alert("⚠️ Error sending card: " + (result.error || "Unknown error"));
+      if (!recipientEmail) {
+        alert("Please enter a recipient's email.");
+        return;
       }
-    } catch (err) {
-      alert("⚠️ Network error: " + err.message);
-    }
-  }
-</script>
 
-  </form>
+      const payload = {
+        toEmail: recipientEmail,
+        subject,
+        templateName,
+        customMessage,
+        senderName
+      };
+
+      try {
+        const res = await fetch("/api/send-card", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          alert("✅ Card sent successfully!");
+        } else {
+          alert("⚠️ Error sending card: " + (result.error || "Unknown error"));
+        }
+      } catch (err) {
+        alert("⚠️ Network error: " + err.message);
+      }
+    }
+  </script>
 </main>
 
 </body>

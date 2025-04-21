@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import fs from 'fs/promises';
+import path from 'path';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -7,17 +9,19 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const { toEmail, subject, templateName, customMessage, senderName } = req.body;
+
+  if (!toEmail || !subject || !templateName || !customMessage) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
   try {
-    const { toEmail, subject, templateName, customMessage } = req.body;
+    const cardPath = path.join(process.cwd(), 'cards', templateName);
+    let html = await fs.readFile(cardPath, 'utf-8');
 
-    if (!toEmail || !subject || !templateName || !customMessage) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    const html = `
-      <h2>${subject}</h2>
-      <p>${customMessage}</p>
-    `;
+    html = html
+      .replace('{{customMessage}}', customMessage)
+      .replace('{{senderName}}', senderName || 'a friend');
 
     const data = await resend.emails.send({
       from: 'cards@greetingcardgenius.com.au',

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>🎉 Birthday Card</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 40px;
+        color: #333;
+      }
+      .card {
+        border: 2px dashed #f59e0b;
+        padding: 30px;
+        border-radius: 12px;
+        background: #fff8e7;
+        max-width: 500px;
+        margin: auto;
+      }
+      .footer {
+        margin-top: 30px;
+        font-style: italic;
+        font-size: 0.9em;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🎉 Happy Birthday!</h1>
+      <p>{{customMessage}}</p>
+      <div class="footer">
+        — Sent with 💌 by {{senderName}} via GreetingCardGenius
+      </div>
+    </div>
+  </body>
+</html>
