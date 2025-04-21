@@ -2,13 +2,15 @@
   "version": 2,
   "builds": [
     { "src": "api/*.mjs", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "assets/**/*", "use": "@vercel/static" },
     { "src": "*.html", "use": "@vercel/static" },
-    { "src": "assets/**/*", "use": "@vercel/static" }
+    { "src": "sitemap.xml", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.mjs" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/(.*).html", "dest": "/$1.html" },
-    { "src": "/", "dest": "/index.html" }
+    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/(.*)", "dest": "/$1.html" }
   ]
 }
