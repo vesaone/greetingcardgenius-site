@@ -1,6 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-const fetch = require('node-fetch');
+const resend = require('resend')('<YOUR_RESEND_API_KEY>'); // Use env variable ideally
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -9,52 +7,25 @@ module.exports = async (req, res) => {
 
   const { toEmail, subject, templateName, customMessage } = req.body;
 
-  if (!toEmail || !subject || !templateName) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  // Load the HTML template
-  const templatePath = path.join(__dirname, '..', 'assets', 'templates', templateName);
-  let htmlContent;
-
   try {
-    htmlContent = fs.readFileSync(templatePath, 'utf-8');
-  } catch (err) {
-    return res.status(404).json({ error: `Template "${templateName}" not found` });
-  }
+    const emailHtml = `
+      <div style="font-family: sans-serif; padding: 20px;">
+        <h1>${subject}</h1>
+        <p>${customMessage}</p>
+        <p>Sent via <strong>GreetingCardGenius</strong></p>
+      </div>
+    `;
 
-  // Inject message if needed
-  const finalHtml = htmlContent.replace('{{message}}', customMessage || '');
-
-  // Send via Resend
-  try {
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev';
-
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: toEmail,
-        subject: subject,
-        html: finalHtml,
-      }),
+    const response = await resend.emails.send({
+      from: 'Greeting Card Genius <cards@greetingcardgenius.com.au>',
+      to: toEmail,
+      subject,
+      html: emailHtml,
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error('Resend error:', data);
-      return res.status(500).json({ error: 'Failed to send email', details: data });
-    }
-
-    return res.status(200).json({ success: true, data });
+    return res.status(200).json({ message: 'Email sent successfully!', data: response });
   } catch (error) {
-    console.error('Unexpected error:', error);
-    return res.status(500).json({ error: 'Server error sending email' });
+    console.error('Resend Error:', error);
+    return res.status(500).json({ error: 'Failed to send email', details: error });
   }
 };
