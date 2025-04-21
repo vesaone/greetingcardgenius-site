@@ -5,12 +5,15 @@
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "assets/**/*", "use": "@vercel/static" },
     { "src": "previews/**/*", "use": "@vercel/static" },
-    { "src": "cards/**/*", "use": "@vercel/static" }
+    { "src": "cards/**/*", "use": "@vercel/static" },
+    { "src": "templates/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.mjs" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/previews/(.*)", "dest": "/previews/$1" },
+    { "src": "/cards/(.*)", "dest": "/cards/$1" },
+    { "src": "/templates/(.*)", "dest": "/templates/$1" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
     { "src": "/(.*)", "dest": "/$1.html" }
   ]
