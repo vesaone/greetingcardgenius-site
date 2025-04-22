@@ -16,7 +16,7 @@
     { "src": "/templates/(.*)", "dest": "/templates/$1" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
     { "src": "/", "dest": "/index.html" },
-    { "src": "/thank-you", "dest": "/thank-you.html" },
+    { "src": "/thank-you", "dest": "/thank-you/index.html" },
     { "src": "/(.*)", "dest": "/$1.html" }
   ]
 }
