@@ -2,7 +2,6 @@
   "version": 2,
   "builds": [
     { "src": "api/*.js", "use": "@vercel/node" },
-    { "src": "api/*.mjs", "use": "@vercel/node" },
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "assets/**/*", "use": "@vercel/static" },
     { "src": "previews/**/*", "use": "@vercel/static" },
