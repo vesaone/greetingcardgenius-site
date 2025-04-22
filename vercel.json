@@ -9,7 +9,7 @@
     { "src": "templates/**/*", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.js" },       // ✅ KEY FIX — now correctly points to .js API files
+    { "src": "/api/(.*)", "dest": "/api/$1.js" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/previews/(.*)", "dest": "/previews/$1" },
     { "src": "/cards/(.*)", "dest": "/cards/$1" },
