@@ -5,7 +5,8 @@
     "dependencies": {
         "node-fetch": "^2.7.0",
         "puppeteer": "^24.6.1",
-        "resend": "^4.3.0"
+        "resend": "^4.3.0",
+        "stripe": "^18.0.0"
     },
     "main": "index.js",
     "scripts": {
