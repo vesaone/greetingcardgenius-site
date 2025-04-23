@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎄 Deck the Halls – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-green-50 font-sans text-gray-800">
+
+<!-- Header -->
+<header class="p-6 border-b text-center bg-white shadow">
+  <div class="flex flex-col items-center space-y-2">
+    <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow" />
+    <div>
+      <a href="/" class="text-2xl font-bold hover:underline">Greeting Card Genius</a>
+      <p class="text-sm text-gray-600">AI-generated cards for every occasion</p>
+    </div>
+    <nav class="space-x-4 text-sm pt-2">
+      <a href="#" class="hover:underline">Instagram</a>
+      <a href="#" class="hover:underline">Facebook</a>
+      <a href="#" class="hover:underline">Twitter/X</a>
+      <a href="/about.html" class="hover:underline">About</a>
+      <a href="/contact.html" class="hover:underline">Contact</a>
+      <a href="/faq.html" class="hover:underline">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="max-w-xl mx-auto p-8 text-center">
+  <h1 class="text-3xl font-bold text-green-700 mb-4">🎄 Deck the Halls</h1>
+  <p class="mb-6 text-lg">Send a festive blast of tinsel and joy (and maybe glitter) to someone’s inbox.</p>
+
+  <img src="/previews/deckthehalls.jpg" alt="Deck the Halls Card Preview" class="mx-auto rounded shadow mb-6 max-w-xs" />
+
+  <form id="cardForm" class="space-y-4">
+    <input name="senderName" placeholder="Your name" class="w-full p-2 border rounded" required />
+    <textarea name="customMessage" placeholder="Your message..." rows="4" class="w-full p-2 border rounded" required></textarea>
+    <input type="email" name="toEmail" placeholder="Recipient's email" class="w-full p-2 border rounded" required />
+    <input type="hidden" name="subject" value="🎄 Deck the Halls!" />
+    <input type="hidden" name="templateName" value="deckthehalls-card.html" />
+    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+      Buy & Send – $1.99 AUD
+    </button>
+  </form>
+
+  <p id="responseMessage" class="text-green-600 mt-4 hidden"></p>
+</main>
+
+<!-- Footer -->
+<footer class="mt-12 text-center text-sm text-gray-500 p-4 border-t">
+  <p>&copy; 2025 Greeting Card Genius · A division of <a href="https://quantumnova.com.au" class="text-green-700 hover:underline">QUANTUMNOVA</a></p>
+  <p>ABN: 43686016526</p>
+</footer>
+
+<script>
+  const form = document.getElementById('cardForm');
+  const msg = document.getElementById('responseMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const body = Object.fromEntries(data.entries());
+    msg.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/create-stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (json.payment_url) window.location.href = json.payment_url;
+      else throw new Error(json.error || 'Failed to create session');
+    } catch (err) {
+      msg.textContent = `⚠️ ${err.message}`;
+      msg.classList.remove('hidden');
+      msg.classList.replace('text-green-600', 'text-red-600');
+    }
+  });
+</script>
+
+</body>
+</html>

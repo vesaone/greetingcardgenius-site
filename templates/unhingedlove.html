@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>❤️‍🔥 I Love You (But Also I'm Unhinged)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Send a dangerously romantic card that says 'I love you' with just a hint of unhinged energy." />
+  <meta name="keywords" content="love card, unhinged, obsessed, passionate, funny romantic card" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-rose-100 font-sans text-gray-800">
+
+<header class="p-6 border-b text-center bg-white shadow">
+  <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow mx-auto mb-2" />
+  <a href="/" class="text-2xl font-bold hover:underline">Greeting Card Genius</a>
+  <p class="text-sm text-gray-600">Some cards whisper. This one breaks the door down.</p>
+</header>
+
+<main class="max-w-xl mx-auto p-8 text-center">
+  <h1 class="text-3xl font-bold text-rose-700 mb-4">❤️‍🔥 I Love You (But Also I’m Unhinged)</h1>
+  <p class="mb-6">This card comes with a side of obsession and a dash of “please text me back.”</p>
+
+  <img src="/previews/unhingedlove.jpg" alt="Unhinged Love Card Preview" class="mx-auto rounded shadow mb-6 max-w-xs" />
+
+  <form id="cardForm" class="space-y-4">
+    <input name="senderName" placeholder="Your name" class="w-full p-2 border rounded text-black" required />
+    <textarea name="customMessage" placeholder="What would your last 3am text say?" rows="4" class="w-full p-2 border rounded text-black" required></textarea>
+    <input type="email" name="toEmail" placeholder="Their email (you maniac)" class="w-full p-2 border rounded text-black" required />
+    <input type="hidden" name="subject" value="❤️‍🔥 I Love You (But Also I’m Unhinged)" />
+    <input type="hidden" name="templateName" value="unhingedlove-card.html" />
+    <button type="submit" class="bg-rose-700 text-white px-6 py-2 rounded hover:bg-rose-800">
+      Send Chaos – $1.99 AUD
+    </button>
+  </form>
+
+  <p id="responseMessage" class="text-green-600 mt-4 hidden"></p>
+</main>
+
+<footer class="mt-12 text-center text-xs text-gray-500 p-4 border-t">
+  &copy; 2025 Greeting Card Genius · A fever dream by 
+  <a href="https://quantumnova.com.au" target="_blank" class="text-rose-600 hover:underline">QUANTUMNOVA</a>
+</footer>
+
+<script>
+  const form = document.getElementById('cardForm');
+  const msg = document.getElementById('responseMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const body = Object.fromEntries(data.entries());
+    msg.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/create-stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (json.payment_url) window.location.href = json.payment_url;
+      else throw new Error(json.error || 'Failed to create session');
+    } catch (err) {
+      msg.textContent = `⚠️ ${err.message}`;
+      msg.classList.remove('hidden');
+      msg.classList.replace('text-green-600', 'text-red-600');
+    }
+  });
+</script>
+
+</body>
+</html>
