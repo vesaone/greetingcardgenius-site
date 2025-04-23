@@ -1,6 +1,7 @@
 import { buffer } from 'micro';
 import Stripe from 'stripe';
-import { sendCard } from '../../utils/sendCard'; // 👈 fixed path
+import { sendCard } from '../utils/sendCard';
+
 
 export const config = {
   api: {
