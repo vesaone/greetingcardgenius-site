@@ -6,23 +6,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-pink-50 to-red-100 text-gray-800 flex items-center justify-center h-screen font-sans">
+<body class="bg-gradient-to-br from-pink-50 to-red-100 text-gray-800 flex items-center justify-center min-h-screen font-sans">
 
   <div class="max-w-lg w-full bg-white shadow-xl rounded-xl p-8 text-center border border-red-200">
     <h1 class="text-3xl sm:text-4xl font-extrabold text-pink-600 mb-4">❤️ You're So Loved!</h1>
-    <p class="text-lg sm:text-xl text-gray-700 leading-relaxed">
-      {{customMessage}}
+
+    <!-- AI-generated message -->
+    <p class="text-base sm:text-lg text-gray-700 mb-4">
+      You bring warmth, light, and love to everyone around you. Never forget how special you are.
     </p>
 
-    <div class="mt-6 text-right text-gray-600 italic">
-      — With love from<br>
+    <!-- User's custom message -->
+    <blockquote class="text-lg sm:text-xl text-gray-800 leading-relaxed italic mb-6">
+      "{{customMessage}}"
+    </blockquote>
+
+    <!-- Footer signature -->
+    <div class="text-right text-gray-600 italic">
+      — With love from<br/>
       <span class="font-semibold text-pink-500">{{senderName}}</span>
     </div>
 
+    <!-- Site credit footer -->
     <footer class="mt-8 text-xs text-gray-400">
-  Sent with ❤️ from <strong>{{senderName}}</strong> via 
-  <a href="https://greetingcardgenius.com.au" class="text-pink-400 hover:underline">GreetingCardGenius.com.au</a>
-</footer>
+      Sent with ❤️ from <strong>{{senderName}}</strong> via 
+      <a href="https://greetingcardgenius.com.au" class="text-pink-400 hover:underline">GreetingCardGenius.com.au</a>
+    </footer>
+  </div>
 
 </body>
 </html>
