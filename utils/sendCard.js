@@ -1,3 +1,7 @@
+import { Resend } from 'resend';
+import fs from 'fs/promises';
+import path from 'path'; // ✅ THIS LINE IS ESSENTIAL
+
 export async function sendCard({ toEmail, subject, templateName, customMessage, senderName }) {
   try {
     const cardPath = path.join(process.cwd(), 'cards', templateName);
