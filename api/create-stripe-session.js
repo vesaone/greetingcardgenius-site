@@ -21,8 +21,8 @@ export default async function handler(req, res) {
         quantity: 1
       }],
       mode: 'payment',
-      success_url: 'https://greetingcardgenius.com/thank-you.html',
-      cancel_url: 'https://greetingcardgenius.com/cancelled.html',
+      success_url: 'https://www.greetingcardgenius.com.au/thank-you',
+      cancel_url: 'https://www.greetingcardgenius.com.au/cancelled',
       metadata: {
         toEmail,
         subject,
