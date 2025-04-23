@@ -1,0 +1,12 @@
+{
+    "id": "cs_test_webhook",
+    "object": "checkout.session",
+    "metadata": {
+      "toEmail": "test@example.com",
+      "subject": "Test Subject",
+      "customMessage": "This is a test",
+      "senderName": "Test Sender",
+      "templateName": "default.html"
+    }
+  }
+  
