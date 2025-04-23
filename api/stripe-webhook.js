@@ -1,6 +1,6 @@
 import { buffer } from 'micro';
 import Stripe from 'stripe';
-import { sendCard } from '../utils/sendCard';
+import { sendCard } from '../utils/sendCard.js';
 
 
 export const config = {

@@ -1,4 +1,4 @@
-import { sendCard } from '@/utils/sendCard.js'; // adjust import based on your structure
+import { sendCard } from '../utils/sendCard.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
