@@ -2,57 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/style.css" />
+  <title>🔥 Hot Stuff</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-white text-gray-900">
-  <header class="p-4 border-b shadow-sm bg-red-50">
-    <div class="max-w-4xl mx-auto flex justify-between items-center">
-      <a href="/" class="text-xl font-bold text-red-600">Greeting Card Genius</a>
-      <nav class="space-x-4">
-        <a href="/templates.html" class="hover:underline">Browse All</a>
-        <a href="/create.html" class="hover:underline">Create Your Own</a>
-        <a href="/faq.html" class="hover:underline">FAQ</a>
-      </nav>
-    </div>
-  </header>
+<body style="font-family: 'Quicksand', sans-serif; background: #fef2f2; color: #b91c1c; text-align: center; padding: 60px;">
 
-  <main class="max-w-3xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-red-600 mb-4">🔥 You’re Hotter Than This Card</h1>
-    <p class="mb-6">Drop some heat in their inbox with this spicy little number.</p>
+  <div style="background: #fff1f2; border: 2px dashed #f87171; padding: 2rem; border-radius: 12px; max-width: 600px; margin: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <h1 style="font-size: 2.5rem; font-weight: 600;">🔥 You Bring the Heat</h1>
 
-    <div class="bg-red-100 border border-red-300 p-6 rounded-lg text-red-900 shadow">
-      <p class="text-lg">Damn, is it just me or did it get hotter in here? 😏</p>
+    <!-- Default message -->
+    <p style="margin-top: 1.2rem; font-size: 1.15rem;">
+      If looks could kill, you'd be a wanted criminal. Stay spicy.
+    </p>
 
-      <!-- Custom Message -->
-      <div id="custom-message" class="mt-4 p-4 bg-white border border-red-200 rounded text-red-800 font-semibold whitespace-pre-wrap"></div>
+    <!-- Custom message -->
+    <blockquote style="margin: 2rem auto 1rem; font-style: italic; font-size: 1.2rem; color: #9f1239;">
+      "{{customMessage}}"
+    </blockquote>
 
-      <!-- Sender Info -->
-      <p id="sender" class="mt-4 text-sm text-red-700 italic"></p>
-    </div>
+    <!-- Footer -->
+    <p style="font-size: 0.95rem; color: #7f1d1d; margin-top: 2rem;">
+      — From <strong>{{senderName}}</strong><br/>
+      <span style="font-size: 0.85rem;">Sent with 🔥 by <a href="https://greetingcardgenius.com.au" style="color: #ef4444; text-decoration: none;">Greeting Card Genius</a></span>
+    </p>
+  </div>
 
-    <div class="mt-6 flex flex-wrap gap-4">
-      <button onclick="navigator.clipboard.writeText(window.location.href)" class="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition">📋 Copy Link</button>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.greetingcardgenius.com.au/templates/spicy-card.html" target="_blank" rel="noopener" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">🔥 Share on Facebook</a>
-      <a href="mailto:?subject=Spicy Card for You&body=Check this out: https://www.greetingcardgenius.com.au/templates/spicy-card.html" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition">📧 Send via Email</a>
-    </div>
-  </main>
-
-  <footer class="mt-12 p-4 border-t text-center text-sm text-gray-500">
-    &copy; 2025 Greeting Card Genius. All rights reserved.
-  </footer>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get("msg");
-    const sender = params.get("from");
-
-    if (msg) {
-      document.getElementById("custom-message").textContent = msg;
-    }
-    if (sender) {
-      document.getElementById("sender").textContent = `Sent with 🔥 from ${sender} via Greeting Card Genius`;
-    }
-  </script>
 </body>
 </html>
