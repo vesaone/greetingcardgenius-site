@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🏆 Your Outfit Deserves an Award – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 font-sans text-white text-center">
+
+  <main class="max-w-xl mx-auto p-8">
+    <h1 class="text-3xl font-bold text-yellow-300 mb-4">🏆 Your Outfit Deserves an Award</h1>
+    <p class="mb-6">You stepped out and shut it down. This card is just official recognition.</p>
+
+    <div class="bg-gray-800 p-6 rounded shadow-lg">
+      <p class="text-lg italic mb-4 text-yellow-200">"Serving looks, breaking necks, taking trophies."</p>
+
+      <div id="customMessageBlock" class="mb-4 hidden">
+        <p class="text-white font-semibold">Custom Message:</p>
+        <p id="customMessage" class="text-gray-300 whitespace-pre-line"></p>
+      </div>
+
+      <p class="text-sm text-yellow-300 mt-6">Sent with 🏆 max drip energy via <strong>Greeting Card Genius</strong></p>
+    </div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const customMsg = urlParams.get("message");
+    const messageBlock = document.getElementById("customMessageBlock");
+    const messagePara = document.getElementById("customMessage");
+
+    if (customMsg && customMsg.trim() !== "") {
+      messagePara.textContent = customMsg;
+      messageBlock.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>

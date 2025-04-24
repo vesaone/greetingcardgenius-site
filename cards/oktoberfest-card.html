@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🍻 Oktoberfest Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-yellow-50 font-sans text-black">
+
+  <!-- Card Content -->
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-yellow-800 mb-4">🍺 Prost! Happy Oktoberfest!</h1>
+    <p class="mb-6 text-lg">Bringing the beer garden vibes straight to your inbox. No lederhosen required.</p>
+
+    <!-- AI Generated Message -->
+    <div class="bg-yellow-100 border border-yellow-500 p-4 rounded mb-6">
+      <p class="italic">"Here's to good friends, overflowing steins, and bratwurst-fueled joy."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-yellow-200 border border-yellow-600 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-yellow-700 mt-8">Sent with 🍺 frothy cheer from <span id="senderNameText">a festive mate</span><br />via <a href="/" class="underline text-yellow-800">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

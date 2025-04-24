@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>💔 Divorce Congrats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-white text-gray-900 font-sans">
+
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-pink-500 mb-4">💔 Divorce Congrats</h1>
+    <p class="mb-6 text-lg">Freedom never looked so good. Here's to fresh starts, quiet bathrooms, and your side of the bed all to yourself.</p>
+
+    <!-- AI Message -->
+    <div class="bg-pink-100 border border-pink-300 p-4 rounded mb-6">
+      <p class="italic">"Congrats on the upgrade—from couple to legend. You're thriving already."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-gray-100 border border-gray-300 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line text-gray-700"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-gray-500 mt-8">Sent with 💅 post-breakup energy from <span id="senderNameText">a newly empowered soul</span><br />via <a href="/" class="underline text-black">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

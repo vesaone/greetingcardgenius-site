@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🏌️ Let’s Hit the Green</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-green-100 font-sans text-gray-900">
+
+  <main class="max-w-xl mx-auto p-8 text-center">
+    <h1 class="text-3xl font-extrabold text-green-700 mb-4">🏌️ Let’s Hit the Green</h1>
+    <p class="text-lg mb-4 italic">"Grab your clubs. We’re overdue for a solid 18 holes (or at least some bad swings and banter)." </p>
+
+    <div id="customMessageBlock" class="mb-4 text-base text-gray-800 hidden"></div>
+
+    <p class="mt-6 text-sm text-gray-600">Sent with ⛳ by <span id="senderNameText">[Your Name]</span> via Greeting Card Genius</p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('customMessage');
+    const sender = params.get('senderName');
+
+    if (msg) {
+      const block = document.getElementById('customMessageBlock');
+      block.innerHTML = `<strong>Message:</strong> ${msg}`;
+      block.classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

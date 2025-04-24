@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>😬 There's No Easy Way to Say This – Card View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800 font-sans">
+
+  <main class="max-w-xl mx-auto p-6 text-center">
+    <h1 class="text-3xl font-bold text-red-500 mb-4">😬 There's No Easy Way to Say This</h1>
+    <p class="mb-6">You probably already know... but just in case, here goes:</p>
+
+    <div class="border border-gray-300 rounded p-4 shadow mb-6 bg-gray-50">
+      <p class="text-lg italic text-gray-700">"There’s no perfect time, no perfect words... but it needed to be said."</p>
+    </div>
+
+    <!-- Optional custom message -->
+    <div id="customMessageContainer" class="border border-red-300 rounded p-4 shadow bg-red-50 text-red-900 text-sm hidden">
+      <p id="customMessageText"></p>
+    </div>
+
+    <p class="mt-8 text-sm text-gray-500">Sent with 😬 via <strong>Greeting Card Genius</strong></p>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('msg');
+    if (message) {
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+      document.getElementById('customMessageText').textContent = message;
+    }
+  </script>
+
+</body>
+</html>

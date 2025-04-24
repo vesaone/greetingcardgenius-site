@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎃 Happy Halloween – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Card Content -->
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-orange-500 mb-4">🎃 Happy Halloween!</h1>
+    <p class="mb-6 text-lg">Boo! Just wanted to scare up a little fun and remind you how monstrously awesome you are.</p>
+
+    <!-- AI Generated Message -->
+    <div class="bg-gray-800 border border-orange-400 p-4 rounded mb-6">
+      <p class="italic">"Hope your costume is fire, your candy haul is elite, and your night is spooktacular."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-gray-900 border border-gray-700 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-orange-300 mt-8">Sent with 🦇 spooky vibes from <span id="senderNameText">someone mysterious</span><br />via <a href="/" class="underline text-orange-400">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    // Inject custom message and sender name if provided
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

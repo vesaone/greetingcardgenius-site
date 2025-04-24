@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍭 Certified Fruit Loop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-pink-50 text-gray-900 font-sans text-center px-6 py-12">
+
+  <h1 class="text-4xl font-bold text-pink-500 mb-4">🍭 Certified Fruit Loop</h1>
+  <p class="text-lg mb-6">You're a little weird. A little loud. And a total legend.</p>
+
+  <p class="text-md italic text-gray-700 mb-6">"In a world of plain old cereal, you're the sugary rainbow one that makes breakfast fun."</p>
+
+  <!-- Optional Custom Message -->
+  <div id="customMessageContainer" class="text-lg font-medium text-black"></div>
+
+  <p class="mt-12 text-sm text-gray-600">Sent with 🍭 via Greeting Card Genius</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const customMessage = params.get('customMessage');
+    if (customMessage) {
+      document.getElementById('customMessageContainer').innerHTML =
+        `<hr class="my-4 border-gray-300"><p class="text-gray-800">"${customMessage}"</p>`;
+    }
+  </script>
+
+</body>
+</html>

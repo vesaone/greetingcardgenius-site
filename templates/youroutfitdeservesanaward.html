@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🏆 Your Outfit Deserves an Award – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Send this card to someone who's absolutely serving. When the fit goes hard, recognition is due." />
+  <meta name="keywords" content="fashion, outfit, award, stylish card, drip, fit check, funny compliment" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- SEO Block -->
+  <meta name="title" content="Your Outfit Deserves an Award Card | Greeting Card Genius">
+  <meta name="description" content="Drip detected. This card is for the fit that turns heads. Send it to someone stylish today.">
+  <meta name="keywords" content="outfit card, style, fashion compliment, fit check, award card, greeting card genius">
+  <meta property="og:title" content="Your Outfit Deserves an Award">
+  <meta property="og:description" content="Drip detected. This card is for the fit that turns heads. Send it to someone stylish today.">
+  <meta property="og:url" content="https://www.greetingcardgenius.com.au/templates/youroutfitdeservesanaward.html">
+</head>
+<body class="bg-gray-900 font-sans text-white">
+
+  <!-- Header -->
+  <header class="p-6 border-b border-gray-700 text-center bg-black shadow">
+    <div class="flex flex-col items-center space-y-2">
+      <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow" />
+      <a href="/" class="text-2xl font-bold hover:underline text-white">Greeting Card Genius</a>
+      <p class="text-sm text-gray-400">AI-generated cards for the stylishly unhinged</p>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-xl mx-auto p-8 text-center">
+    <h1 class="text-3xl font-extrabold text-yellow-300 mb-4">🏆 Your Outfit Deserves an Award</h1>
+    <p class="mb-6">Fit check? Passed. Slayed? Absolutely. Someone needed to say it—and now they can.</p>
+
+    <img src="/previews/youroutfitdeservesanaward.jpg" alt="Your Outfit Deserves an Award Card Preview" class="mx-auto rounded shadow mb-6 max-w-xs" />
+
+    <form id="cardForm" class="space-y-4">
+      <input name="senderName" placeholder="Your name" class="w-full p-2 border rounded text-black" required />
+      <textarea name="customMessage" placeholder="Drop a fire emoji, a compliment, or just ‘yasss queen’…" rows="4" class="w-full p-2 border rounded text-black" required></textarea>
+      <input type="email" name="toEmail" placeholder="Recipient's email" class="w-full p-2 border rounded text-black" required />
+      <input type="hidden" name="subject" value="🏆 Your Fit Is Fire" />
+      <input type="hidden" name="templateName" value="youroutfitdeservesanaward-card.html" />
+      <button type="submit" class="bg-yellow-300 text-black px-6 py-2 rounded hover:bg-yellow-200">
+        Buy & Send – $1.99 AUD
+      </button>
+    </form>
+
+    <p id="responseMessage" class="text-green-400 mt-4 hidden"></p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-sm text-gray-500 p-4 border-t border-gray-700">
+    <p>&copy; 2025 Greeting Card Genius · A division of <a href="https://quantumnova.com.au" target="_blank" class="text-yellow-300 hover:underline">QUANTUMNOVA</a></p>
+    <p>Registered in Australia | ABN 43686016526</p>
+    <p class="mt-2">
+      <a href="/privacy.html" class="hover:underline">Privacy Policy</a> |
+      <a href="/refund.html" class="hover:underline">Refund Policy</a> |
+      <a href="/terms.html" class="hover:underline">Terms & Conditions</a>
+    </p>
+  </footer>
+
+  <script>
+    const form = document.getElementById('cardForm');
+    const msg = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = Object.fromEntries(data.entries());
+      msg.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/create-stripe-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (json.payment_url) window.location.href = json.payment_url;
+        else throw new Error(json.error || 'Failed to create session');
+      } catch (err) {
+        msg.textContent = `⚠️ ${err.message}`;
+        msg.classList.remove('hidden');
+        msg.classList.replace('text-green-400', 'text-red-400');
+      }
+    });
+  </script>
+
+</body>
+</html>

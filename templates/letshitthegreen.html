@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🏌️ Let's Hit the Green – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Send this to your golf buddy and get ready to tee off. It’s time to hit the green." />
+  <meta name="keywords" content="golf card, tee off, let's play golf, funny golf card, let's hit the green" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- SEO -->
+  <meta name="title" content="Let's Hit the Green | Golf Card">
+  <meta property="og:title" content="Let's Hit the Green">
+  <meta property="og:description" content="Tee time? Send this to your favorite golf partner and make it official.">
+  <meta property="og:url" content="https://www.greetingcardgenius.com.au/templates/letshitthegreen.html">
+</head>
+<body class="bg-green-50 font-sans text-gray-900">
+
+  <!-- Header -->
+  <header class="p-6 border-b border-gray-300 text-center bg-white shadow">
+    <div class="flex flex-col items-center space-y-2">
+      <img src="/assets/logo.jpg" alt="Greeting Card Genius Logo" class="h-16 w-16 rounded shadow" />
+      <a href="/" class="text-2xl font-bold hover:underline text-gray-900">Greeting Card Genius</a>
+      <p class="text-sm text-gray-500">AI-generated cards for every occasion—even golf.</p>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-xl mx-auto p-8 text-center">
+    <h1 class="text-3xl font-extrabold text-green-700 mb-4">🏌️ Let's Hit the Green</h1>
+    <p class="mb-6">Not a drill. Not a driving range. It's tee time—let’s swing!</p>
+
+    <img src="/previews/letshitthegreen.jpg" alt="Let's Hit the Green Card Preview" class="mx-auto rounded shadow mb-6 max-w-xs" />
+
+    <form id="cardForm" class="space-y-4">
+      <input name="senderName" placeholder="Your name" class="w-full p-2 border rounded text-black" required />
+      <textarea name="customMessage" placeholder="Optional custom note (like 'first round's on you')" rows="4" class="w-full p-2 border rounded text-black"></textarea>
+      <input type="email" name="toEmail" placeholder="Recipient's email" class="w-full p-2 border rounded text-black" required />
+      <input type="hidden" name="subject" value="🏌️ Let’s Hit the Green" />
+      <input type="hidden" name="templateName" value="letshitthegreen-card.html" />
+      <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-500">
+        Buy & Send – $1.99 AUD
+      </button>
+    </form>
+
+    <p id="responseMessage" class="text-green-600 mt-4 hidden"></p>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-sm text-gray-500 p-4 border-t border-gray-300">
+    <p>&copy; 2025 Greeting Card Genius · A division of <a href="https://quantumnova.com.au" target="_blank" class="text-green-600 hover:underline">QUANTUMNOVA</a></p>
+    <p>Registered in Australia | ABN 43686016526</p>
+    <p class="mt-2">
+      <a href="/privacy.html" class="hover:underline">Privacy Policy</a> |
+      <a href="/refund.html" class="hover:underline">Refund Policy</a> |
+      <a href="/terms.html" class="hover:underline">Terms & Conditions</a>
+    </p>
+  </footer>
+
+  <script>
+    const form = document.getElementById('cardForm');
+    const msg = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = Object.fromEntries(data.entries());
+      msg.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/create-stripe-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (json.payment_url) window.location.href = json.payment_url;
+        else throw new Error(json.error || 'Failed to create session');
+      } catch (err) {
+        msg.textContent = `⚠️ ${err.message}`;
+        msg.classList.remove('hidden');
+        msg.classList.replace('text-green-600', 'text-red-600');
+      }
+    });
+  </script>
+
+</body>
+</html>

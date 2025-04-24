@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nice One, Genius | Greeting Card Genius</title>
+  <meta name="description" content="For the friend who just made a genius-level move. Or completely flopped it. Either way, they earned this." />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800 font-sans">
+
+  <main class="max-w-xl mx-auto p-8 text-center">
+    <h1 class="text-3xl font-bold text-purple-600 mb-4">🧠 Nice One, Genius</h1>
+    <p class="mb-6">Whether they just outsmarted a toaster or face-planted into the group chat—this card’s for them.</p>
+
+    <div class="border rounded-lg p-4 shadow bg-purple-50">
+      <h2 class="text-xl font-semibold mb-2">💌 Message Preview</h2>
+      <p class="italic text-gray-700 mb-4" id="aiMessage">
+        You really nailed it this time. In the most... creative way possible.
+      </p>
+      <p class="text-gray-700 font-medium hidden" id="customMessage"></p>
+      <p class="text-sm text-gray-500 mt-4" id="signature">Sent with 🧠 via Greeting Card Genius</p>
+    </div>
+
+    <div class="mt-8">
+      <a href="/" class="text-blue-600 underline hover:text-blue-800 text-sm">Browse More Cards</a>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const customMessage = params.get('msg');
+    const senderName = params.get('from');
+    const msgBox = document.getElementById('customMessage');
+    const sig = document.getElementById('signature');
+
+    if (customMessage) {
+      msgBox.textContent = customMessage;
+      msgBox.classList.remove('hidden');
+    }
+
+    if (senderName) {
+      sig.innerHTML = `Sent with 🧠 from <strong>${senderName}</strong> via Greeting Card Genius`;
+    }
+  </script>
+
+</body>
+</html>

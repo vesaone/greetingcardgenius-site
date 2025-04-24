@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>👋 Auf Wiedersehen – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+
+  <main class="max-w-xl mx-auto py-16 px-6 text-center">
+    <h1 class="text-4xl font-bold text-blue-700 mb-4">👋 Auf Wiedersehen</h1>
+    <p class="text-lg mb-6 text-gray-700">Not goodbye forever, just until we meet again.</p>
+
+    <div class="bg-gray-100 rounded-lg p-6 shadow-md">
+      <p class="text-xl italic text-gray-800 mb-4">"Here’s to new journeys and future reunions."</p>
+
+      <!-- Optional custom message -->
+      <div id="customMessageBlock" class="hidden mt-4 border-t border-gray-300 pt-4">
+        <p class="font-semibold text-gray-600">Message from the sender:</p>
+        <p id="customMessage" class="text-gray-800"></p>
+      </div>
+
+      <p class="mt-6 text-sm text-gray-500 italic">Sent with 👋 by <span id="senderName" class="font-medium text-gray-700">someone who’ll miss you</span><br>via Greeting Card Genius</p>
+    </div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const sender = urlParams.get('senderName');
+    const message = urlParams.get('customMessage');
+
+    if (sender) {
+      document.getElementById('senderName').textContent = sender;
+    }
+    if (message) {
+      document.getElementById('customMessage').textContent = message;
+      document.getElementById('customMessageBlock').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

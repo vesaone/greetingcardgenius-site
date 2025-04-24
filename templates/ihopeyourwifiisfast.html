@@ -1,0 +1,82 @@
+!DOCTYPE html
+html lang=en
+head
+  meta charset=UTF-8 
+  title📶 I Hope Your Wi-Fi Is Fast – Greeting Card Geniustitle
+  meta name=viewport content=width=device-width, initial-scale=1.0 
+  meta name=description content=Wish someone the ultimate blessing in the modern world blazing fast Wi-Fi. 
+  meta name=keywords content=wifi card, fast internet, meme card, modern humor, tech greeting, greeting card genius 
+  link rel=icon href=assetsfavicon.jpg type=imagejpeg 
+  link href=httpscdn.jsdelivr.netnpmtailwindcss@2.2.19disttailwind.min.css rel=stylesheet
+  meta name=title content=I Hope Your Wi-Fi Is Fast Card  Greeting Card Genius
+  meta property=ogtitle content=I Hope Your Wi-Fi Is Fast
+  meta property=ogdescription content=In a world full of lags, may their connection always be strong.
+  meta property=ogurl content=httpswww.greetingcardgenius.com.autemplatesihopeyourwifiisfast.html
+head
+body class=bg-gray-900 font-sans text-white
+
+  header class=p-6 border-b border-gray-700 text-center bg-black shadow
+    div class=flex flex-col items-center space-y-2
+      img src=assetslogo.jpg alt=Greeting Card Genius Logo class=h-16 w-16 rounded shadow 
+      a href= class=text-2xl font-bold hoverunderline text-whiteGreeting Card Geniusa
+      p class=text-sm text-gray-400AI-generated cards for the real onesp
+    div
+  header
+
+  main class=max-w-xl mx-auto p-8 text-center
+    h1 class=text-3xl font-extrabold text-blue-400 mb-4📶 I Hope Your Wi-Fi Is Fasth1
+    p class=mb-6Because buffering is pain, and you deserve smooth streaming.p
+
+    img src=previewsihopeyourwifiisfast.jpg alt=I Hope Your Wi-Fi Is Fast Card Preview class=mx-auto rounded shadow mb-6 max-w-xs 
+
+    form id=cardForm class=space-y-4
+      input name=senderName placeholder=Your name class=w-full p-2 border rounded text-black required 
+      textarea name=customMessage placeholder=Add your own speed-boosting words... rows=4 class=w-full p-2 border rounded text-black requiredtextarea
+      input type=email name=toEmail placeholder=Recipient's email class=w-full p-2 border rounded text-black required 
+      input type=hidden name=subject value=📶 I Hope Your Wi-Fi Is Fast 
+      input type=hidden name=templateName value=ihopeyourwifiisfast-card.html 
+      button type=submit class=bg-blue-400 text-black px-6 py-2 rounded hoverbg-blue-300
+        Buy & Send – $1.99 AUD
+      button
+    form
+
+    p id=responseMessage class=text-green-400 mt-4 hiddenp
+  main
+
+  footer class=mt-12 text-center text-sm text-gray-500 p-4 border-t border-gray-700
+    p&copy; 2025 Greeting Card Genius · A division of a href=httpsquantumnova.com.au target=_blank class=text-blue-300 hoverunderlineQUANTUMNOVAap
+    pRegistered in Australia  ABN 43686016526p
+    p class=mt-2
+      a href=privacy.html class=hoverunderlinePrivacy Policya 
+      a href=refund.html class=hoverunderlineRefund Policya 
+      a href=terms.html class=hoverunderlineTerms & Conditionsa
+    p
+  footer
+
+  script
+    const form = document.getElementById('cardForm');
+    const msg = document.getElementById('responseMessage');
+    form.addEventListener('submit', async (e) = {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = Object.fromEntries(data.entries());
+      msg.classList.add('hidden');
+      try {
+        const res = await fetch('apicreate-stripe-session', {
+          method 'POST',
+          headers { 'Content-Type' 'applicationjson' },
+          body JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (json.payment_url) window.location.href = json.payment_url;
+        else throw new Error(json.error  'Failed to create session');
+      } catch (err) {
+        msg.textContent = `⚠️ ${err.message}`;
+        msg.classList.remove('hidden');
+        msg.classList.replace('text-green-400', 'text-red-400');
+      }
+    });
+  script
+
+body
+html

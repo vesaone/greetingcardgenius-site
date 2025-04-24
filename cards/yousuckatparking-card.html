@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🅿️ You Suck at Parking – Greeting Card Genius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="For the space invaders and curb crushers in your life. Let them know with a honk of humor." />
+  <meta name="keywords" content="bad parking, funny insult card, road rage humor, sarcastic greeting card" />
+  <meta name="title" content="You Suck at Parking Card | Greeting Card Genius">
+  <meta property="og:title" content="You Suck at Parking Card">
+  <meta property="og:description" content="For the curb crushers and yellow line violators. Let them know.">
+  <meta property="og:url" content="https://www.greetingcardgenius.com.au/templates/yousuckatparking-card.html">
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 font-sans text-white text-center">
+
+  <main class="max-w-xl mx-auto p-8">
+    <h1 class="text-3xl font-bold text-yellow-400 mb-4">🅿️ You Suck at Parking</h1>
+    <p class="mb-6">If this card reached you, consider it a roadside intervention.</p>
+
+    <div class="bg-gray-800 p-6 rounded shadow-lg">
+      <p class="text-lg italic mb-4 text-gray-300">"I didn’t know it was possible to park like a giraffe with vertigo, but here we are."</p>
+
+      <!-- Optional Custom Message -->
+      <div id="customMessageBlock" class="mb-4 hidden">
+        <p class="text-white font-semibold">Custom Message:</p>
+        <p id="customMessage" class="text-gray-300 whitespace-pre-line"></p>
+      </div>
+
+      <p class="text-sm text-yellow-500 mt-6">Sent with 🚗 passive aggression via <strong>Greeting Card Genius</strong></p>
+    </div>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const customMsg = urlParams.get("message");
+    const messageBlock = document.getElementById("customMessageBlock");
+    const messagePara = document.getElementById("customMessage");
+
+    if (customMsg && customMsg.trim() !== "") {
+      messagePara.textContent = customMsg;
+      messageBlock.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>

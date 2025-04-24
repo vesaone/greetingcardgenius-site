@@ -1,0 +1,87 @@
+!DOCTYPE html
+html lang=en
+head
+  meta charset=UTF-8 
+  title🧠 Overthinkers Anonymous – Greeting Card Geniustitle
+  meta name=viewport content=width=device-width, initial-scale=1.0 
+  meta name=description content=For the friends who can spiral into 17 alternate realities before breakfast. This card is for them. 
+  meta name=keywords content=overthinking card, anxious card, funny mental health card, ai greeting, greeting card genius 
+  link rel=icon href=assetsfavicon.jpg type=imagejpeg 
+  link href=httpscdn.jsdelivr.netnpmtailwindcss@2.2.19disttailwind.min.css rel=stylesheet 
+  meta name=title content=Overthinkers Anonymous Card  Greeting Card Genius
+  meta property=ogtitle content=🧠 Overthinkers Anonymous
+  meta property=ogdescription content=For the person who thinks about what they said 5 years ago at 3am.
+  meta property=ogurl content=httpswww.greetingcardgenius.com.autemplatesoverthinkersanonymous.html
+head
+body class=bg-gray-900 text-white font-sans
+
+  !-- Header --
+  header class=p-6 border-b border-gray-700 text-center bg-black shadow
+    div class=flex flex-col items-center space-y-2
+      img src=assetslogo.jpg alt=Greeting Card Genius Logo class=h-16 w-16 rounded shadow 
+      a href= class=text-2xl font-bold hoverunderline text-whiteGreeting Card Geniusa
+      p class=text-sm text-gray-400AI-generated cards for the real onesp
+    div
+  header
+
+  !-- Main --
+  main class=max-w-xl mx-auto p-8 text-center
+    h1 class=text-3xl font-extrabold text-purple-300 mb-4🧠 Overthinkers Anonymoush1
+    p class=mb-6This card is for the one who overanalyzes texts, replays convos, and still regrets that thing they said in 2014.p
+
+    img src=previewsoverthinkersanonymous.jpg alt=Overthinkers Anonymous Card class=mx-auto rounded shadow mb-6 max-w-xs 
+
+    form id=cardForm class=space-y-4
+      input name=senderName placeholder=Your name class=w-full p-2 border rounded text-black required 
+      textarea name=customMessage placeholder=Say something they can overthink... rows=4 class=w-full p-2 border rounded text-blacktextarea
+      input type=email name=toEmail placeholder=Recipient's email class=w-full p-2 border rounded text-black required 
+      input type=hidden name=subject value=🧠 Official Welcome to Overthinkers Anonymous 
+      input type=hidden name=templateName value=overthinkersanonymous-card.html 
+      button type=submit class=bg-purple-300 text-black px-6 py-2 rounded hoverbg-purple-200
+        Buy & Send – $1.99 AUD
+      button
+    form
+
+    p id=responseMessage class=text-green-400 mt-4 hiddenp
+  main
+
+  !-- Footer --
+  footer class=mt-12 text-center text-sm text-gray-500 p-4 border-t border-gray-700
+    p&copy; 2025 Greeting Card Genius · A division of a href=httpsquantumnova.com.au target=_blank class=text-purple-300 hoverunderlineQUANTUMNOVAap
+    pRegistered in Australia  ABN 43686016526p
+    p class=mt-2
+      a href=privacy.html class=hoverunderlinePrivacy Policya 
+      a href=refund.html class=hoverunderlineRefund Policya 
+      a href=terms.html class=hoverunderlineTerms & Conditionsa
+    p
+  footer
+
+  script
+    const form = document.getElementById('cardForm');
+    const msg = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) = {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = Object.fromEntries(data.entries());
+      msg.classList.add('hidden');
+
+      try {
+        const res = await fetch('apicreate-stripe-session', {
+          method 'POST',
+          headers { 'Content-Type' 'applicationjson' },
+          body JSON.stringify(body)
+        });
+        const json = await res.json();
+        if (json.payment_url) window.location.href = json.payment_url;
+        else throw new Error(json.error  'Failed to create session');
+      } catch (err) {
+        msg.textContent = `⚠️ ${err.message}`;
+        msg.classList.remove('hidden');
+        msg.classList.replace('text-green-400', 'text-red-400');
+      }
+    });
+  script
+
+body
+html

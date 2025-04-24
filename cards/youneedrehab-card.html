@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🚑 You Need Rehab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-pink-50 font-sans text-black">
+
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-pink-600 mb-4">🚑 You Need Rehab</h1>
+    <p class="mb-6 text-lg">This card is your hangover, in digital form. May it burn slightly less than last weekend's regret.</p>
+
+    <!-- AI Message -->
+    <div class="bg-pink-100 border border-pink-300 p-4 rounded mb-6">
+      <p class="italic">"They say the first step is admitting you have a problem. This card is step zero."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-pink-200 border border-pink-500 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-pink-700 mt-8">Sent with 🚑 slight concern from <span id="senderNameText">someone who cares... kinda</span><br />via <a href="/" class="underline text-pink-700">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💸 You Owe Me – A Card Reminder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-yellow-50 text-gray-900 font-sans min-h-screen flex flex-col justify-center items-center p-8 text-center">
+
+  <div class="max-w-md w-full">
+    <h1 class="text-3xl font-extrabold text-yellow-700 mb-4">💸 You Owe Me</h1>
+    <p class="mb-6" id="customMessage">No message loaded.</p>
+
+    <p class="text-sm text-yellow-800 mt-4">
+      Sent with a friendly nudge 💸 via <a href="https://www.greetingcardgenius.com.au" class="underline font-medium" target="_blank">Greeting Card Genius</a>
+    </p>
+
+    
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const message = params.get("m");
+    const sender = params.get("s");
+    const display = document.getElementById("customMessage");
+
+    if (message && sender) {
+      display.textContent = `${message} — ${sender}`;
+    } else {
+      display.textContent = "Someone thinks you need a reminder... 💸";
+    }
+  </script>
+
+</body>
+</html>

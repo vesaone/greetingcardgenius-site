@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎣 Let’s Go Fishing Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-blue-50 font-sans text-black">
+
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-blue-600 mb-4">🎣 Let’s Go Fishing</h1>
+    <p class="mb-6 text-lg">If you’ve got bait and bad jokes, I’ve got a spare rod and zero plans.</p>
+
+    <!-- AI Generated Message -->
+    <div class="bg-blue-100 border border-blue-400 p-4 rounded mb-6">
+      <p class="italic">"The sea is calling, and we’re ghosting responsibility."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-blue-200 border border-blue-600 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-blue-700 mt-8">Sent with 🐟 bait breath from <span id="senderNameText">a fishing fanatic</span><br />via <a href="/" class="underline text-blue-600">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

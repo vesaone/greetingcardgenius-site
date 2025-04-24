@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>😔 Sorry I Can’t Make It</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-white text-gray-800 font-sans">
+
+  <main class="max-w-xl mx-auto py-20 px-6 text-center">
+    <h1 class="text-4xl font-extrabold text-red-500 mb-4">😔 Sorry I Can’t Make It</h1>
+    <p class="mb-6 text-lg">I really wish I could be there... but life had other plans. Hope it's amazing anyway!</p>
+
+    <!-- AI Message -->
+    <div class="bg-red-100 border border-red-300 p-4 rounded mb-6">
+      <p class="italic">"Sometimes, all we can do is send love from afar. This is one of those times."</p>
+    </div>
+
+    <!-- Optional Custom Message -->
+    <div id="customMessageContainer" class="hidden bg-gray-100 border border-gray-300 p-4 rounded mb-6">
+      <p id="customMessageText" class="whitespace-pre-line text-gray-700"></p>
+    </div>
+
+    <!-- Sender -->
+    <p class="text-sm text-gray-500 mt-8">Sent with 🙏 genuine apologies from <span id="senderNameText">a humble flake</span><br />via <a href="/" class="underline text-black">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get('msg');
+    const sender = params.get('from');
+
+    if (msg) {
+      document.getElementById('customMessageText').textContent = msg;
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+    }
+
+    if (sender) {
+      document.getElementById('senderNameText').textContent = sender;
+    }
+  </script>
+
+</body>
+</html>

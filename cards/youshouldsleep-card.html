@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>😴 You Should Sleep</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/assets/favicon.jpg" type="image/jpeg" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-indigo-50 text-gray-900 font-sans min-h-screen flex flex-col justify-center items-center p-8 text-center">
+
+  <div class="max-w-md w-full">
+    <h1 class="text-3xl font-extrabold text-indigo-600 mb-4">😴 You Should Sleep</h1>
+
+    <!-- AI-generated message (always shown) -->
+    <p class="mb-4 italic text-gray-800">This card is your official reminder: close your tabs, not your dreams. Sleep is free therapy. Take it.</p>
+
+    <!-- Optional custom message -->
+    <p id="customMessage" class="mb-6 font-medium hidden"></p>
+
+    <!-- Attribution -->
+    <p class="text-sm text-indigo-700 mt-4">
+      Sent with a yawn 💤 via <a href="https://www.greetingcardgenius.com.au" class="underline font-medium" target="_blank">Greeting Card Genius</a>
+    </p>
+
+    <div class="mt-8">
+      <a href="/" class="inline-block bg-indigo-100 hover:bg-indigo-200 text-black px-4 py-2 rounded font-semibold">Browse More Cards</a>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const message = params.get("m");
+    const sender = params.get("s");
+    const customEl = document.getElementById("customMessage");
+
+    if (message && sender) {
+      customEl.textContent = `"${message}" — ${sender}`;
+      customEl.classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>

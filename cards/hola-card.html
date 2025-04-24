@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>👋 Hola – You Got a Card!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-yellow-50 text-gray-800 font-sans min-h-screen flex items-center justify-center p-6">
+  <div class="max-w-xl w-full bg-white shadow-xl rounded-lg p-6 text-center">
+    <h1 class="text-4xl font-bold text-yellow-500 mb-4">👋 Hola</h1>
+    <p class="mb-6 text-lg">A little wave just to let you know someone’s thinking of you.</p>
+    
+    <div id="customMessageBox" class="mb-4 hidden">
+      <p class="text-sm text-gray-500 uppercase">Custom message:</p>
+      <p id="customMessage" class="text-base mt-1"></p>
+    </div>
+
+    <p class="text-sm text-gray-500 mt-6 italic">Sent with 🌞 sunshine vibes by <span id="senderName">someone who cares</span> via Greeting Card Genius.</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sender = params.get("from");
+    const msg = params.get("msg");
+
+    if (sender) document.getElementById("senderName").textContent = sender;
+    if (msg) {
+      const box = document.getElementById("customMessageBox");
+      const text = document.getElementById("customMessage");
+      text.textContent = msg;
+      box.classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍗 You Need Protein – Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+
+  <main class="max-w-xl mx-auto p-6 text-center">
+    <h1 class="text-3xl font-bold text-yellow-600 mb-4">🍗 You Need Protein</h1>
+    <p class="mb-6 italic text-gray-700">"A message packed with emotional calories and digital chicken."</p>
+
+    <div class="border border-yellow-300 rounded p-4 shadow bg-yellow-50 text-yellow-900 text-sm mb-4">
+      <p><strong>AI says:</strong> "Don't skip leg day. And don’t skip this card either."</p>
+    </div>
+
+    <div id="customMessageContainer" class="border border-gray-300 rounded p-4 shadow bg-gray-50 text-gray-900 text-sm hidden">
+      <p id="customMessageText"></p>
+    </div>
+
+    <p class="mt-8 text-sm text-gray-500">Sent with 🍗 by <strong>Greeting Card Genius</strong></p>
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('msg');
+    if (message) {
+      document.getElementById('customMessageContainer').classList.remove('hidden');
+      document.getElementById('customMessageText').textContent = message;
+    }
+  </script>
+
+</body>
+</html>

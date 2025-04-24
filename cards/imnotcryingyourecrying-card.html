@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>😭 I'm Not Crying, You're Crying – Delivered</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-sans text-center p-8">
+  <main class="max-w-xl mx-auto">
+    <h1 class="text-3xl font-extrabold text-blue-300 mb-4">😭 I'm Not Crying, You're Crying</h1>
+    <p class="mb-6 italic">"Sometimes tears are just the brain sweating out the emotions."</p>
+    <p id="customMessage" class="mb-6 text-white font-medium"></p>
+    <p class="text-sm text-gray-400">Sent with 😭 by <span id="senderName"></span> via <a href="https://www.greetingcardgenius.com.au" class="underline text-blue-300">Greeting Card Genius</a></p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sender = params.get('senderName');
+    const msg = params.get('customMessage');
+
+    if (sender) {
+      document.getElementById('senderName').textContent = sender;
+    }
+    if (msg) {
+      document.getElementById('customMessage').textContent = msg;
+    }
+  </script>
+</body>
+</html>
