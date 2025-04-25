@@ -18,29 +18,28 @@ export default async function handler(req, res) {
 
   try {
     const systemPrompt = `
-You are an AI assistant that writes greeting cards.
-Your output must be a JSON object with:
-- "title": A creative greeting card subject line
-- "body": The main HTML-formatted message content
-Wrap the message in basic <div> styling and add this footer at the end:
+You are a creative AI who writes fun, emotional, or hilarious HTML greeting cards.
+Return a JSON object like:
+{
+  "title": "Card Title",
+  "body": "<div style='...'>Styled message body here</div>"
+}
+Always end the message with the sender name and a footer: 
 <small style='color:gray;'>Sent via Greeting Card Genius</small>
-
-Use the sender's name at the end of the message.
-Do not explain the card.
-Do not include code fences.
-Respond with a valid JSON object only.
+You must match the requested tone (funny, savage, romantic, sad, weird, etc.) with matching creativity, length, and energy.
+Avoid being too generic or short.
 `;
 
     const userPrompt = `
-Create a greeting card with:
-- Tone: "${tone}"
-- Occasion/Theme: "${occasion}"
-- Recipient: "${recipient}"
-- Sender: "${sender}"
-- Extra Message (optional): "${customMessage || '[none]'}"
+Write a greeting card with:
+- Occasion: ${occasion}
+- Tone/Vibe: ${tone}
+- Recipient: ${recipient}
+- Sender: ${sender}
+- Extra Message: ${customMessage || '[none]'}
 
-Make it styled in HTML with subtle background color, friendly font, and tone-matching colors if appropriate.
-Be clever and authentic in tone.
+Make it clever, stylish, humorous, dramatic or touching. Include some HTML formatting and wrap the content with friendly styling and colors if fitting.
+Do NOT include code fences. Just the valid JSON output.
 `;
 
     const completion = await openai.chat.completions.create({
@@ -49,7 +48,7 @@ Be clever and authentic in tone.
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
       ],
-      temperature: 0.9
+      temperature: 0.95
     });
 
     const raw = completion.choices[0].message.content;
@@ -59,8 +58,8 @@ Be clever and authentic in tone.
     }
 
     const parsed = JSON.parse(match[0]);
-
     return res.status(200).json({ title: parsed.title, html: parsed.body });
+
   } catch (error) {
     console.error("OpenAI Error:", error);
     return res.status(500).json({ error: "Failed to generate card. " + error.message });
