@@ -138,23 +138,24 @@
   });
 
   async function buyCard() {
-    try {
-      const response = await fetch("/api/create-stripe-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(generatedCardData)
-      });
+  try {
+    const response = await fetch("/api/create-stripe-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(generatedCardData)
+    });
 
-      const data = await response.json();
-      if (data.url) {
-        window.location = data.url;
-      } else {
-        document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
-      }
-    } catch (err) {
-      document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
+    const data = await response.json();
+    if (data.payment_url) {  // ✅ CHECK FOR THE CORRECT KEY
+      window.location.href = data.payment_url;
+    } else {
+      document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
     }
+  } catch (err) {
+    document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
   }
+}
+
 
   // ✅ Auto-hide watermark if returning from Stripe with a paid session
   window.addEventListener("load", () => {
