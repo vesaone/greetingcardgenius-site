@@ -57,24 +57,20 @@
 </section>
 
 
+
 <section id="generator" class="mt-16 bg-white p-6 rounded shadow max-w-3xl mx-auto">
   <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
   <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card and send it instantly. No two cards are alike.</p>
 
   <form id="cardGenForm" class="space-y-4">
     <div>
-      <label class="block font-medium">Tone</label>
-      <select name="tone" class="border p-2 w-full rounded">
-        <option value="funny">Funny</option>
-        <option value="savage">Savage</option>
-        <option value="sweet">Sweet</option>
-        <option value="weird">Weird</option>
-      </select>
+      <label class="block font-medium">Tone or Vibe</label>
+      <input type="text" name="tone" class="border p-2 w-full rounded" placeholder="e.g. Funny, Savage, Drunk Pirate" required />
     </div>
 
     <div>
       <label class="block font-medium">Occasion or Theme</label>
-      <input type="text" name="occasion" class="border p-2 w-full rounded" placeholder="e.g. Promotion, Breakup, Bizarre Gift" required />
+      <input type="text" name="occasion" class="border p-2 w-full rounded" placeholder="e.g. Promotion, Breakup, Weird Energy" required />
     </div>
 
     <div>
@@ -102,8 +98,7 @@
 
   <div id="generatedCard" class="mt-6 hidden bg-blue-50 p-4 rounded shadow text-left">
     <h3 class="font-bold text-xl mb-2" id="generatedTitle"></h3>
-    <div id="generatedPreview" class="bg-white p-4 rounded border border-blue-300 shadow-md">
-    </div>
+    <div id="generatedPreview" class="bg-white p-4 rounded border border-blue-300 shadow-md"></div>
     <button onclick="sendGeneratedCard()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Send This Card</button>
     <p id="sendStatus" class="mt-2 text-sm text-gray-600"></p>
   </div>
@@ -112,8 +107,9 @@
 <script>
   let generatedCardData = {};
 
-  document.getElementById("cardGenForm").addEventListener("submit", function(e) {
+  document.getElementById("cardGenForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
     const tone = e.target.tone.value;
     const occasion = e.target.occasion.value;
     const recipient = e.target.recipient.value;
@@ -121,41 +117,29 @@
     const recipientEmail = e.target.recipientEmail.value;
     const customMessage = e.target.customMessage.value;
 
-    const title = generateTitle(tone, occasion, recipient);
-    const body = generateStyledHtmlCard(tone, occasion, recipient, sender, customMessage);
+    try {
+      const response = await fetch("/api/generate-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tone, occasion, recipient, sender, customMessage })
+      });
 
-    document.getElementById("generatedTitle").textContent = title;
-    document.getElementById("generatedPreview").innerHTML = body;
-    document.getElementById("generatedCard").classList.remove("hidden");
+      const data = await response.json();
+      document.getElementById("generatedTitle").textContent = data.title;
+      document.getElementById("generatedPreview").innerHTML = data.html;
+      document.getElementById("generatedCard").classList.remove("hidden");
 
-    generatedCardData = {
-      toEmail: recipientEmail,
-      subject: title,
-      inlineHtml: body,
-      customMessage,
-      senderName: sender
-    };
+      generatedCardData = {
+        toEmail: recipientEmail,
+        subject: data.title,
+        inlineHtml: data.html,
+        customMessage,
+        senderName: sender
+      };
+    } catch (err) {
+      alert("❌ Failed to generate card. Please try again.");
+    }
   });
-
-  function generateTitle(tone, occasion, recipient) {
-    return `${tone.charAt(0).toUpperCase() + tone.slice(1)} ${occasion} Card for ${recipient}`;
-  }
-
-  function generateStyledHtmlCard(tone, occasion, recipient, sender, customMessage) {
-    const base = {
-      funny: `Hey <strong>${recipient}</strong>,<br><br>I couldn't let this ${occasion} pass without roasting you a little. Just kidding (kind of).`,
-      sweet: `Dear <strong>${recipient}</strong>,<br><br>Wishing you a beautiful ${occasion} filled with love, kindness, and zero awkward moments.`,
-      savage: `Yo <strong>${recipient}</strong>,<br><br>This ${occasion} card is the nicest thing you're getting from me today. Be grateful.`,
-      weird: `To <strong>${recipient}</strong>,<br><br>On this mystical ${occasion}, the universe aligned, and AI spat out this card. You're welcome.`
-    };
-
-    const message = base[tone] + `<br><br>${customMessage ? `<em>${customMessage}</em><br><br>` : ""}Love,<br><strong>${sender}</strong>`;
-
-    return `<div style="font-family: sans-serif; border: 1px solid #ccc; padding: 16px; border-radius: 8px;">
-              <h2 style="color: #2563eb;">✨ ${occasion} ✨</h2>
-              <p style="margin-top: 10px; font-size: 16px; color: #333;">${message}</p>
-            </div>`;
-  }
 
   async function sendGeneratedCard() {
     try {
