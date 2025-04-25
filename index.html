@@ -58,48 +58,46 @@
 
 
 
+
 <section id="generator" class="mt-16 bg-white p-6 rounded shadow max-w-3xl mx-auto">
   <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
-  <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card and send it instantly. No two cards are alike.</p>
+  <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card. Pay only $1.99 to send it.</p>
 
   <form id="cardGenForm" class="space-y-4">
     <div>
       <label class="block font-medium">Tone or Vibe</label>
-      <input type="text" name="tone" class="border p-2 w-full rounded" placeholder="e.g. Funny, Savage, Drunk Pirate" required />
+      <input type="text" name="tone" class="border p-2 w-full rounded" required />
     </div>
-
     <div>
       <label class="block font-medium">Occasion or Theme</label>
-      <input type="text" name="occasion" class="border p-2 w-full rounded" placeholder="e.g. Promotion, Breakup, Weird Energy" required />
+      <input type="text" name="occasion" class="border p-2 w-full rounded" required />
     </div>
-
     <div>
       <label class="block font-medium">Recipient</label>
-      <input type="text" name="recipient" class="border p-2 w-full rounded" placeholder="e.g. Your boss, Roommate" required />
+      <input type="text" name="recipient" class="border p-2 w-full rounded" required />
     </div>
-
     <div>
       <label class="block font-medium">Your Name</label>
-      <input type="text" name="sender" class="border p-2 w-full rounded" placeholder="e.g. The Banana King" required />
+      <input type="text" name="sender" class="border p-2 w-full rounded" required />
     </div>
-
     <div>
       <label class="block font-medium">Recipient's Email</label>
-      <input type="email" name="recipientEmail" class="border p-2 w-full rounded" placeholder="example@email.com" required />
+      <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
     </div>
-
     <div>
       <label class="block font-medium">Extra Message (optional)</label>
-      <textarea name="customMessage" rows="3" class="border p-2 w-full rounded" placeholder="Write something extra..."></textarea>
+      <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
     </div>
-
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
   </form>
 
-  <div id="generatedCard" class="mt-6 hidden bg-blue-50 p-4 rounded shadow text-left">
+  <div id="generatedCard" class="mt-6 hidden relative bg-blue-50 p-4 rounded shadow text-left">
+    <div id="cardWatermark" class="absolute inset-0 flex items-center justify-center bg-white/80 text-xl font-bold text-red-600 z-10">
+      🔒 Not Sent – Purchase to Send
+    </div>
     <h3 class="font-bold text-xl mb-2" id="generatedTitle"></h3>
     <div id="generatedPreview" class="bg-white p-4 rounded border border-blue-300 shadow-md"></div>
-    <button onclick="sendGeneratedCard()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Send This Card</button>
+    <button onclick="buyCard()" class="mt-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Buy & Send for $1.99</button>
     <p id="sendStatus" class="mt-2 text-sm text-gray-600"></p>
   </div>
 </section>
@@ -132,34 +130,35 @@
       generatedCardData = {
         toEmail: recipientEmail,
         subject: data.title,
-        inlineHtml: data.html,
-        customMessage,
-        senderName: sender
+        html: data.html,
+        senderName: sender,
+        customMessage
       };
     } catch (err) {
       alert("❌ Failed to generate card. Please try again.");
     }
   });
 
-  async function sendGeneratedCard() {
+  async function buyCard() {
     try {
-      const res = await fetch("/api/send-card", {
+      const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(generatedCardData)
       });
 
-      const result = await res.json();
-      if (res.ok) {
-        document.getElementById("sendStatus").textContent = "✅ Card sent successfully!";
+      const data = await response.json();
+      if (data.url) {
+        window.location = data.url;
       } else {
-        document.getElementById("sendStatus").textContent = "❌ Error sending card: " + result.error;
+        document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
       }
     } catch (err) {
-      document.getElementById("sendStatus").textContent = "❌ Failed to connect to backend.";
+      document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
     }
   }
 </script>
+
 
 <section id="all-cards">
 <h3 class="text-xl font-semibold mb-4">💌 All Live Templates</h3>
