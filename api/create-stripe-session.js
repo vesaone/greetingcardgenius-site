@@ -23,9 +23,11 @@ export default async function handler(req, res) {
 
   // 🧠 Normalize templateName to match your /cards/[name]-card.html
   const normalizedTemplateName = templateName
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '') // remove symbols, spaces, etc.
-    .replace(/html$/, '');     // strip ".html" if included
+  .toLowerCase()
+  .replace(/[^a-z0-9-]/g, '')  // keep dashes (critical!)
+  .replace(/\.html$/, '')      // strip ".html" if included
+  .replace(/-card$/, '');      // optional: avoid "-card-card"
+
 
   try {
     const safeHtml = html.length > 400 ? html.slice(0, 400) + "…" : html;
