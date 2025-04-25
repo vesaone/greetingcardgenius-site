@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     subject,
     senderName,
     customMessage = "",
-    templateName = "AI", // default to "AI" for generated cards
+    templateName = "AI", // default for AI cards
     html = ""
   } = req.body;
 
@@ -21,14 +21,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  // 🧠 Normalize templateName to match your /cards/[name]-card.html
+  const normalizedTemplateName = templateName
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '') // remove symbols, spaces, etc.
+    .replace(/html$/, '');     // strip ".html" if included
+
   try {
-    // Prevent HTML from exceeding Stripe's metadata limit
     const safeHtml = html.length > 400 ? html.slice(0, 400) + "…" : html;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: 'price_1RGgooLZwnxz54z4ih7JqVPE', // YOUR PRICE ID
+        price: 'price_1RGgooLZwnxz54z4ih7JqVPE', // your Stripe price ID
         quantity: 1
       }],
       mode: 'payment',
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
         subject,
         senderName,
         customMessage: customMessage.slice(0, 500),
-        templateName,
+        templateName: normalizedTemplateName,
         html: safeHtml
       }
     });
