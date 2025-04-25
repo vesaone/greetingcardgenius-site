@@ -10,8 +10,9 @@ export default async function sendCard({ toEmail, subject, customMessage, sender
 
     // 👇 Use normalized templateName as-is (do NOT re-normalize)
     if (!html && templateName) {
-      const filename = `${templateName}-card.html`; // already normalized
+      const filename = `${templateName}-card.html`;
       const filePath = path.join(process.cwd(), 'cards', filename);
+      
 
       if (!fs.existsSync(filePath)) {
         throw new Error(`Card template "${filename}" not found`);
