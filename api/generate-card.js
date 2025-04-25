@@ -18,22 +18,29 @@ export default async function handler(req, res) {
 
   try {
     const systemPrompt = `
-You are an AI assistant that writes greeting cards based on user input.
-Return a JSON object with a creative card title and full HTML-formatted message body.
-Match the tone requested. Use humorous, poetic, weird, savage, or heartfelt vibes depending on the tone.
-Always end the message with an appropriate sign-off based on tone.
-Add "<small style='color:gray;'>Sent via Greeting Card Genius</small>" at the bottom.
-Only return a valid JSON object. Do not explain it. Do not include code fences.
+You are an AI assistant that writes greeting cards.
+Your output must be a JSON object with:
+- "title": A creative greeting card subject line
+- "body": The main HTML-formatted message content
+Wrap the message in basic <div> styling and add this footer at the end:
+<small style='color:gray;'>Sent via Greeting Card Genius</small>
+
+Use the sender's name at the end of the message.
+Do not explain the card.
+Do not include code fences.
+Respond with a valid JSON object only.
 `;
 
     const userPrompt = `
-Write a unique greeting card for the following:
-Occasion/Theme: "${occasion}"
-Tone/Vibe: "${tone}"
-Recipient: "${recipient}"
-Sender: "${sender}"
-Include this custom message if provided: "${customMessage || '[none]'}"
-Respond ONLY with a JSON object like: {"title": "Card Title", "html": "<p>HTML Body</p>"}
+Create a greeting card with:
+- Tone: "${tone}"
+- Occasion/Theme: "${occasion}"
+- Recipient: "${recipient}"
+- Sender: "${sender}"
+- Extra Message (optional): "${customMessage || '[none]'}"
+
+Make it styled in HTML with subtle background color, friendly font, and tone-matching colors if appropriate.
+Be clever and authentic in tone.
 `;
 
     const completion = await openai.chat.completions.create({
@@ -46,15 +53,14 @@ Respond ONLY with a JSON object like: {"title": "Card Title", "html": "<p>HTML B
     });
 
     const raw = completion.choices[0].message.content;
-
     const match = raw.match(/\{[\s\S]*\}/);
     if (!match) {
       return res.status(500).json({ error: "Could not extract JSON from OpenAI response." });
     }
 
     const parsed = JSON.parse(match[0]);
-    return res.status(200).json({ title: parsed.title, html: parsed.html });
 
+    return res.status(200).json({ title: parsed.title, html: parsed.body });
   } catch (error) {
     console.error("OpenAI Error:", error);
     return res.status(500).json({ error: "Failed to generate card. " + error.message });
