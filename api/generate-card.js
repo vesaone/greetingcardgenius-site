@@ -1,4 +1,3 @@
-
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
@@ -16,7 +15,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const systemPrompt = `
+  try {
+    const systemPrompt = `
 You are a creative AI that writes emotionally charged or hilarious HTML greeting cards.
 Only respond with a JSON object in this format:
 {
@@ -25,7 +25,7 @@ Only respond with a JSON object in this format:
 }
 
 Requirements:
-- Limit total HTML output to **under 400 characters**
+- Limit total HTML output to under 400 characters
 - The body must include:
   - a well-styled <div> wrapping the content
   - a strong creative message using the given tone
@@ -38,7 +38,6 @@ Rules:
 - Respond with valid JSON only.
 - Allow playful emojis if appropriate for the tone.
 `;
-
 
     const userPrompt = `
 Write a greeting card for the following:
@@ -69,7 +68,6 @@ Make it dramatic, weird, sweet, savage, or funny — depending on the tone. Be b
 
     const parsed = JSON.parse(match[0]);
 
-    // Ensure footer and sender are included (fallback)
     const footer = "<small style='color:gray;'>Sent via Greeting Card Genius</small>";
     let html = parsed.body;
     if (!html.includes(footer)) {
