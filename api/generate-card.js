@@ -27,10 +27,12 @@ Only respond with a JSON object in this format:
 The body must include:
 - a well-styled <div> wrapping the content
 - a strong creative message using the given tone
+- the custom message entered by the sender to be included
 - an appropriate closing line including the sender's name
 - a final line: <small style='color:gray;'>Sent via Greeting Card Genius</small>
 Never include Markdown or code fences.
 Respond with valid JSON only.
+Allow playful emojis if appropriate for the tone.
 `;
 
     const userPrompt = `

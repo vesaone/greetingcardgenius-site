@@ -79,5 +79,36 @@
   }
 </script>
 
+<script>
+  async function confirmAndSend() {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+    if (!sessionId) return;
+
+    try {
+      const response = await fetch("/api/confirm-stripe-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Remove watermark if it exists
+        const watermark = document.getElementById("cardWatermark");
+        if (watermark) {
+          watermark.style.display = "none";
+        }
+      } else {
+        console.error("❌ Failed to send card:", result.error);
+      }
+    } catch (err) {
+      console.error("❌ Error confirming session:", err);
+    }
+  }
+
+  confirmAndSend();
+</script>
+
 </body>
 </html>
