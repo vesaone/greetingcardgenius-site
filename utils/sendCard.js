@@ -8,11 +8,15 @@ export default async function sendCard({ toEmail, subject, customMessage, sender
   try {
     let emailHtml = html;
 
-    // 👇 Use normalized templateName as-is (do NOT re-normalize)
+    // ✅ If no AI HTML, fall back to template
     if (!html && templateName) {
-      const filename = `${templateName}-card.html`;
+      // 🛡️ Prevent double "-card"
+      const baseName = templateName.toLowerCase().endsWith('-card')
+        ? templateName.toLowerCase()
+        : `${templateName.toLowerCase()}-card`;
+
+      const filename = `${baseName}.html`;
       const filePath = path.join(process.cwd(), 'cards', filename);
-      
 
       if (!fs.existsSync(filePath)) {
         throw new Error(`Card template "${filename}" not found`);
