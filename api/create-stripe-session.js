@@ -1,50 +1,53 @@
-import Stripe from "stripe";
+import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-08-16",
+  apiVersion: '2023-08-16',
 });
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).end("Method Not Allowed");
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const {
     toEmail,
     subject,
-    customMessage,
     senderName,
-    templateName,
-    html // only used for AI cards
+    customMessage = "",
+    templateName = "AI", // default to "AI" for generated cards
+    html = ""
   } = req.body;
 
-  if (!toEmail || !subject || !senderName) {
-    return res.status(400).json({ error: "Missing session data" });
+  if (!toEmail || !subject || !senderName || !templateName) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
+    // Prevent HTML from exceeding Stripe's metadata limit
+    const safeHtml = html.length > 400 ? html.slice(0, 400) + "…" : html;
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: ['card'],
       line_items: [{
-        price: "price_1RGgooLZwnxz54z4ih7JqVPE", // $1.99 AUD
-        quantity: 1,
+        price: 'price_1RGgooLZwnxz54z4ih7JqVPE', // YOUR PRICE ID
+        quantity: 1
       }],
-      mode: "payment",
-      success_url: "https://www.greetingcardgenius.com.au/thank-you?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "https://www.greetingcardgenius.com.au/cancelled",
+      mode: 'payment',
+      success_url: 'https://www.greetingcardgenius.com.au/thank-you?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://www.greetingcardgenius.com.au/cancelled',
       metadata: {
         toEmail,
         subject,
-        customMessage: customMessage || "",
         senderName,
-        templateName: templateName || "AI",
-        html: html || "" // optional, only for AI cards
+        customMessage: customMessage.slice(0, 500),
+        templateName,
+        html: safeHtml
       }
     });
 
-    return res.status(200).json({ url: session.url });
+    return res.status(200).json({ payment_url: session.url });
 
   } catch (err) {
     console.error("❌ Stripe error:", err);
-    return res.status(500).json({ error: "Failed to create Stripe session" });
+    return res.status(500).json({ error: err.message });
   }
 }
