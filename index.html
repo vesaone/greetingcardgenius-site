@@ -155,6 +155,20 @@
       document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
     }
   }
+
+  // ✅ Auto-hide watermark if returning from Stripe with a paid session
+  window.addEventListener("load", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("session_id")) {
+      const watermark = document.getElementById("cardWatermark");
+      if (watermark) {
+        watermark.style.opacity = "0";
+        setTimeout(() => {
+          watermark.style.display = "none";
+        }, 500);
+      }
+    }
+  });
 </script>
 
 
