@@ -1,39 +1,39 @@
 
-import { OpenAI } from 'openai';
+import { OpenAI } from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const { occasion, tone, recipient, sender, customMessage } = req.body;
 
   if (!occasion || !tone || !recipient || !sender) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
-    const systemPrompt = \`
+    const systemPrompt = `
 You are an AI assistant that writes greeting cards based on user input. 
 Return a JSON object with a creative card title and full HTML-formatted message body. 
 Match the tone requested. Use humorous, poetic, weird, savage, or heartfelt vibes depending on the tone. 
 Always end the message with an appropriate sign-off based on tone.
 Add "<small style='color:gray;'>Sent via Greeting Card Genius</small>" at the bottom.
-    \`;
+    `;
 
-    const userPrompt = \`
+    const userPrompt = `
 Write a unique greeting card for the following:
-Occasion/Theme: "\${occasion}"
-Tone/Vibe: "\${tone}"
-Recipient: "\${recipient}"
-Sender: "\${sender}"
-Include this custom message if provided: "\${customMessage || '[none]'}"
+Occasion/Theme: "${occasion}"
+Tone/Vibe: "${tone}"
+Recipient: "${recipient}"
+Sender: "${sender}"
+Include this custom message if provided: "${customMessage || '[none]'}"
 Respond ONLY with a JSON object like: {"title": "Card Title", "html": "<p>HTML Body</p>"}
-    \`;
+    `;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
