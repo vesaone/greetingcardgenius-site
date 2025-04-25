@@ -18,28 +18,31 @@ export default async function handler(req, res) {
 
   try {
     const systemPrompt = `
-You are a creative AI who writes fun, emotional, or hilarious HTML greeting cards.
-Return a JSON object like:
+You are a creative AI that writes emotionally charged or hilarious HTML greeting cards.
+Only respond with a JSON object in this format:
 {
   "title": "Card Title",
-  "body": "<div style='...'>Styled message body here</div>"
+  "body": "<div style='background:#fffbe6;padding:20px;border-radius:10px;font-family:sans-serif;color:#222'> ... </div>"
 }
-Always end the message with the sender name and a footer: 
-<small style='color:gray;'>Sent via Greeting Card Genius</small>
-You must match the requested tone (funny, savage, romantic, sad, weird, etc.) with matching creativity, length, and energy.
-Avoid being too generic or short.
+The body must include:
+- a well-styled <div> wrapping the content
+- a strong creative message using the given tone
+- an appropriate closing line including the sender's name
+- a final line: <small style='color:gray;'>Sent via Greeting Card Genius</small>
+Never include Markdown or code fences.
+Respond with valid JSON only.
 `;
 
     const userPrompt = `
-Write a greeting card with:
-- Occasion: ${occasion}
-- Tone/Vibe: ${tone}
-- Recipient: ${recipient}
-- Sender: ${sender}
-- Extra Message: ${customMessage || '[none]'}
+Write a greeting card for the following:
 
-Make it clever, stylish, humorous, dramatic or touching. Include some HTML formatting and wrap the content with friendly styling and colors if fitting.
-Do NOT include code fences. Just the valid JSON output.
+Occasion/Theme: ${occasion}
+Tone/Vibe: ${tone}
+Recipient: ${recipient}
+Sender: ${sender}
+Extra Message: ${customMessage || '[none]'}
+
+Make it dramatic, weird, sweet, savage, or funny — depending on the tone. Be bold. Match the mood. Always include closing with the sender name and footer.
 `;
 
     const completion = await openai.chat.completions.create({
@@ -58,7 +61,18 @@ Do NOT include code fences. Just the valid JSON output.
     }
 
     const parsed = JSON.parse(match[0]);
-    return res.status(200).json({ title: parsed.title, html: parsed.body });
+
+    // Ensure footer and sender are included (fallback)
+    const footer = "<small style='color:gray;'>Sent via Greeting Card Genius</small>";
+    let html = parsed.body;
+    if (!html.includes(footer)) {
+      html += `<br />${footer}`;
+    }
+    if (!html.toLowerCase().includes(sender.toLowerCase())) {
+      html += `<br /><p style='font-style:italic;'>– ${sender}</p>`;
+    }
+
+    return res.status(200).json({ title: parsed.title, html });
 
   } catch (error) {
     console.error("OpenAI Error:", error);
