@@ -1,29 +1,49 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
+import { Resend } from 'resend';
 
-export async function sendCard({ toEmail, subject, senderName, customMessage, templateName, html }) {
-  let cardHtml;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-  if (html) {
-    // ✅ AI card: use provided HTML directly
-    cardHtml = html;
-  } else if (templateName) {
-    // ✅ Template card: load file
-    const filePath = path.join(process.cwd(), "cards", `${templateName}.html`);
-    try {
-      cardHtml = fs.readFileSync(filePath, "utf8");
-    } catch (err) {
-      throw new Error(`Card template "${templateName}" not found`);
+export default async function sendCard({ toEmail, subject, customMessage, senderName, templateName, html }) {
+  try {
+    let emailHtml = html;
+
+    // 👇 If no HTML provided, assume it's a static template name
+    if (!html && templateName) {
+      const normalizedTemplate = templateName
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/[^a-z0-9]/g, '')
+        .replace(/card$/, '');
+
+      const filename = `${normalizedTemplate}-card.html`;
+      const filePath = path.join(process.cwd(), 'cards', filename);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`Card template "${filename}" not found`);
+      }
+
+      const templateHtml = fs.readFileSync(filePath, 'utf-8');
+
+      // Replace {{customMessage}} and {{senderName}} placeholders
+      emailHtml = templateHtml
+        .replace(/{{\s*customMessage\s*}}/gi, customMessage || '')
+        .replace(/{{\s*senderName\s*}}/gi, senderName || '');
     }
 
-    // Optionally replace tokens like {{sender}}, {{message}} etc.
-    cardHtml = cardHtml
-      .replace(/{{sender}}/g, senderName)
-      .replace(/{{message}}/g, customMessage);
-  } else {
-    throw new Error("No template or HTML provided.");
-  }
+    // ✅ Send via Resend
+    await resend.emails.send({
+      from: 'cards@greetingcardgenius.com.au',
+      to: toEmail,
+      subject: subject || 'You’ve received a card!',
+      html: emailHtml
+    });
 
-  // Proceed to send cardHtml via Resend or whatever system you're using
-  // e.g. sendEmail({ to: toEmail, subject, html: cardHtml });
+    console.log(`✅ Card sent to ${toEmail}`);
+    return { success: true };
+
+  } catch (err) {
+    console.error("❌ Resend failed:", err);
+    throw err;
+  }
 }
