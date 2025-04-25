@@ -57,76 +57,105 @@
 </section>
 
 
+<section id="generator" class="mt-16 bg-white p-6 rounded shadow max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
+  <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card. Pay only $1.99 to send it.</p>
 
+  <form id="cardGenForm" class="space-y-4">
+    <div>
+      <label class="block font-medium">Tone or Vibe</label>
+      <input type="text" name="tone" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Occasion or Theme</label>
+      <input type="text" name="occasion" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Recipient</label>
+      <input type="text" name="recipient" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Your Name</label>
+      <input type="text" name="sender" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Recipient's Email</label>
+      <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Extra Message (optional)</label>
+      <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
+    </div>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
+  </form>
 
+  <div id="generatedCard" class="mt-6 hidden relative bg-blue-50 p-4 rounded shadow text-left">
+    <div id="cardWatermark" class="absolute inset-0 flex items-center justify-center bg-white/80 text-xl font-bold text-red-600 z-10">
+      🔒 Not Sent – Purchase to Send
+    </div>
+    <h3 class="font-bold text-xl mb-2" id="generatedTitle"></h3>
+    <div id="generatedPreview" class="bg-white p-4 rounded border border-blue-300 shadow-md"></div>
+    <button onclick="buyCard()" class="mt-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Buy & Send for $1.99</button>
+    <p id="sendStatus" class="mt-2 text-sm text-gray-600"></p>
+  </div>
+</section>
 
-import { OpenAI } from "openai";
+<script>
+  let generatedCardData = {};
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+  document.getElementById("cardGenForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+    const tone = e.target.tone.value;
+    const occasion = e.target.occasion.value;
+    const recipient = e.target.recipient.value;
+    const sender = e.target.sender.value;
+    const recipientEmail = e.target.recipientEmail.value;
+    const customMessage = e.target.customMessage.value;
 
-  const { occasion, tone, recipient, sender, customMessage } = req.body;
+    try {
+      const response = await fetch("/api/generate-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tone, occasion, recipient, sender, customMessage })
+      });
 
-  if (!occasion || !tone || !recipient || !sender) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
+      const data = await response.json();
+      document.getElementById("generatedTitle").textContent = data.title;
+      document.getElementById("generatedPreview").innerHTML = data.html;
+      document.getElementById("generatedCard").classList.remove("hidden");
 
-  try {
-    const systemPrompt = `
-You are a creative AI who writes fun, emotional, or hilarious HTML greeting cards.
-Return a JSON object like:
-{
-  "title": "Card Title",
-  "body": "<div style='...'>Styled message body here</div>"
-}
-Always end the message with the sender name and a footer: 
-<small style='color:gray;'>Sent via Greeting Card Genius</small>
-You must match the requested tone (funny, savage, romantic, sad, weird, etc.) with matching creativity, length, and energy.
-Avoid being too generic or short.
-`;
-
-    const userPrompt = `
-Write a greeting card with:
-- Occasion: ${occasion}
-- Tone/Vibe: ${tone}
-- Recipient: ${recipient}
-- Sender: ${sender}
-- Extra Message: ${customMessage || '[none]'}
-
-Make it clever, stylish, humorous, dramatic or touching. Include some HTML formatting and wrap the content with friendly styling and colors if fitting.
-Do NOT include code fences. Just the valid JSON output.
-`;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.95
-    });
-
-    const raw = completion.choices[0].message.content;
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) {
-      return res.status(500).json({ error: "Could not extract JSON from OpenAI response." });
+      generatedCardData = {
+        toEmail: recipientEmail,
+        subject: data.title,
+        html: data.html,
+        senderName: sender,
+        customMessage
+      };
+    } catch (err) {
+      alert("❌ Failed to generate card. Please try again.");
     }
+  });
 
-    const parsed = JSON.parse(match[0]);
-    return res.status(200).json({ title: parsed.title, html: parsed.body });
+  async function buyCard() {
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(generatedCardData)
+      });
 
-  } catch (error) {
-    console.error("OpenAI Error:", error);
-    return res.status(500).json({ error: "Failed to generate card. " + error.message });
+      const data = await response.json();
+      if (data.url) {
+        window.location = data.url;
+      } else {
+        document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
+      }
+    } catch (err) {
+      document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
+    }
   }
-}
-
+</script>
 
 
 <section id="all-cards">
