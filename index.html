@@ -139,7 +139,7 @@
 
   async function buyCard() {
     try {
-      const response = await fetch("/api/create-checkout-session", {
+      const response = await fetch("/api/create-stripe-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(generatedCardData)
