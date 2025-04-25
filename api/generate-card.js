@@ -16,24 +16,29 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  try {
-    const systemPrompt = `
+  const systemPrompt = `
 You are a creative AI that writes emotionally charged or hilarious HTML greeting cards.
 Only respond with a JSON object in this format:
 {
   "title": "Card Title",
   "body": "<div style='background:#fffbe6;padding:20px;border-radius:10px;font-family:sans-serif;color:#222'> ... </div>"
 }
-The body must include:
-- a well-styled <div> wrapping the content
-- a strong creative message using the given tone
-- the custom message entered by the sender to be included
-- an appropriate closing line including the sender's name
-- a final line: <small style='color:gray;'>Sent via Greeting Card Genius</small>
-Never include Markdown or code fences.
-Respond with valid JSON only.
-Allow playful emojis if appropriate for the tone.
+
+Requirements:
+- Limit total HTML output to **under 400 characters**
+- The body must include:
+  - a well-styled <div> wrapping the content
+  - a strong creative message using the given tone
+  - the custom message entered by the sender
+  - an appropriate closing line including the sender's name
+  - a final line: <small style='color:gray;'>Sent via Greeting Card Genius</small>
+
+Rules:
+- Do NOT include Markdown or code fences.
+- Respond with valid JSON only.
+- Allow playful emojis if appropriate for the tone.
 `;
+
 
     const userPrompt = `
 Write a greeting card for the following:
