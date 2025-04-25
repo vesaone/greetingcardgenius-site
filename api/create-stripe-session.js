@@ -8,20 +8,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const {
+  let {
     toEmail,
     subject,
     senderName,
-    customMessage = "",
-    templateName = "AI", // default for AI cards
-    html = ""
+    customMessage,
+    templateName,
+    html
   } = req.body;
+
+  // Default fallbacks
+  customMessage = customMessage || "";
+  templateName = templateName || "AI";
+  html = html || "";
 
   if (!toEmail || !subject || !senderName || !templateName) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-
-  const = templateName,
 
   try {
     const safeHtml = html.length > 400 ? html.slice(0, 400) + "…" : html;
@@ -29,7 +32,7 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: 'price_1RGgooLZwnxz54z4ih7JqVPE', // your Stripe price ID
+        price: 'price_1RGgooLZwnxz54z4ih7JqVPE',
         quantity: 1
       }],
       mode: 'payment',
@@ -40,7 +43,7 @@ export default async function handler(req, res) {
         subject,
         senderName,
         customMessage: customMessage.slice(0, 500),
-        templateName: normalizedTemplateName,
+        templateName,
         html: safeHtml
       }
     });
