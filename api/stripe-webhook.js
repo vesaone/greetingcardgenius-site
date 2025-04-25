@@ -1,7 +1,6 @@
 import { buffer } from 'micro';
 import Stripe from 'stripe';
-import sendCard from '../utils/sendCard.js'; 
-
+import sendCard from '../utils/sendCard.js';
 
 export const config = {
   api: {
@@ -31,14 +30,19 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const {
+    let {
       toEmail,
       subject,
       customMessage,
       senderName,
       templateName,
-      html // 🧠 Injected for AI cards
+      html
     } = session.metadata || {};
+
+    // 🛡️ Strip any trailing "-card.html" to prevent double suffixing
+    if (templateName && templateName.toLowerCase().endsWith('-card.html')) {
+      templateName = templateName.replace(/-card\.html$/i, '');
+    }
 
     try {
       console.log(`📨 Sending card to: ${toEmail}`);
@@ -48,7 +52,7 @@ export default async function handler(req, res) {
         customMessage,
         senderName,
         templateName,
-        html // 🤖 Only used if present
+        html
       });
 
       return res.status(200).send('✅ Email sent');
