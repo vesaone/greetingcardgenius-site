@@ -1,45 +1,29 @@
+import fs from "fs";
+import path from "path";
 
-import { Resend } from 'resend';
-import fs from 'fs/promises';
-import path from 'path';
+export async function sendCard({ toEmail, subject, senderName, customMessage, templateName, html }) {
+  let cardHtml;
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function sendCard({ toEmail, subject, templateName, customMessage, senderName, inlineHtml }) {
-  try {
-    let html;
-
-    if (inlineHtml) {
-      html = inlineHtml
-        .replace('{{customMessage}}', customMessage || '')
-        .replace('{{senderName}}', senderName || 'a friend');
-    } else {
-      const cardPath = path.join(process.cwd(), 'cards', templateName);
-      console.log(`📄 Reading card file from: ${cardPath}`);
-
-      try {
-        await fs.access(cardPath);
-      } catch {
-        throw new Error(`Card template "${templateName}" not found at ${cardPath}`);
-      }
-
-      html = await fs.readFile(cardPath, 'utf-8');
-      html = html
-        .replace('{{customMessage}}', customMessage)
-        .replace('{{senderName}}', senderName || 'a friend');
+  if (html) {
+    // ✅ AI card: use provided HTML directly
+    cardHtml = html;
+  } else if (templateName) {
+    // ✅ Template card: load file
+    const filePath = path.join(process.cwd(), "cards", `${templateName}.html`);
+    try {
+      cardHtml = fs.readFileSync(filePath, "utf8");
+    } catch (err) {
+      throw new Error(`Card template "${templateName}" not found`);
     }
 
-    const data = await resend.emails.send({
-      from: 'cards@greetingcardgenius.com.au',
-      to: toEmail,
-      subject,
-      html,
-    });
-
-    console.log(`✅ Email sent to ${toEmail} (${inlineHtml ? 'inline' : templateName})`);
-    return { success: true, data };
-  } catch (error) {
-    console.error('❌ sendCard failed:', error);
-    throw new Error('Failed to send card: ' + error.message);
+    // Optionally replace tokens like {{sender}}, {{message}} etc.
+    cardHtml = cardHtml
+      .replace(/{{sender}}/g, senderName)
+      .replace(/{{message}}/g, customMessage);
+  } else {
+    throw new Error("No template or HTML provided.");
   }
+
+  // Proceed to send cardHtml via Resend or whatever system you're using
+  // e.g. sendEmail({ to: toEmail, subject, html: cardHtml });
 }
