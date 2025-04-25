@@ -2,7 +2,6 @@ import { buffer } from 'micro';
 import Stripe from 'stripe';
 import { sendCard } from '../utils/sendCard.js';
 
-
 export const config = {
   api: {
     bodyParser: false,
@@ -31,11 +30,26 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const { toEmail, subject, customMessage, senderName, templateName } = session.metadata;
+    const {
+      toEmail,
+      subject,
+      customMessage,
+      senderName,
+      templateName,
+      html // 🧠 Injected for AI cards
+    } = session.metadata || {};
 
     try {
       console.log(`📨 Sending card to: ${toEmail}`);
-      await sendCard({ toEmail, subject, customMessage, senderName, templateName });
+      await sendCard({
+        toEmail,
+        subject,
+        customMessage,
+        senderName,
+        templateName,
+        html // 🤖 Only used if present
+      });
+
       return res.status(200).send('✅ Email sent');
     } catch (err) {
       console.error('❌ Resend failed:', err);
