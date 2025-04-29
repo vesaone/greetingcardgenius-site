@@ -110,5 +110,45 @@
   confirmAndSend();
 </script>
 
+<script>
+  window.addEventListener("load", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("session_id")) {
+      const downloadBtn = document.createElement('button');
+      downloadBtn.textContent = 'Download Your Card';
+      downloadBtn.className = 'mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded';
+      downloadBtn.onclick = async () => {
+        const tone = "Thank You"; // fallback default
+        const occasion = "Order Complete"; // fallback
+        const cardText = "Your AI greeting card has been delivered."; // fallback
+
+        const prompt = `${tone} ${occasion}`;
+
+        const response = await fetch('/api/generateCard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, cardText }),
+        });
+
+        if (!response.ok) {
+          alert('❌ Failed to download your card.');
+          return;
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'greeting-card.png';
+        link.click();
+      };
+
+      // Append to main content area or somewhere visually clear
+      document.querySelector("main").appendChild(downloadBtn);
+    }
+  });
+</script>
+
 </body>
 </html>
