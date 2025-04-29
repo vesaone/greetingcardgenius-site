@@ -55,6 +55,11 @@
       <a href="https://www.facebook.com/sharer/sharer.php?u=https://greetingcardgenius.com.au"
          target="_blank" class="text-blue-700 hover:underline">📘 Share on Facebook</a>
     </div>
+<div id="generatedCard" class="hidden card-preview bg-white p-4 rounded shadow border mt-10 text-left max-w-xl mx-auto">
+  <h2 id="cardTitle" class="text-xl font-bold mb-2"></h2>
+  <div id="cardPreview"></div>
+</div>
+
   </div>
 </main>
 
@@ -76,6 +81,28 @@
     copyInput.setSelectionRange(0, 99999);
     document.execCommand("copy");
     alert("📋 Copied to clipboard!");
+  }
+</script>
+
+<script>
+  async function downloadPaidCard() {
+    const node = document.getElementById('generatedCard') || document.querySelector('.card-preview');
+
+    if (!node) {
+      alert("Card not found on page.");
+      return;
+    }
+
+    try {
+      const dataUrl = await htmlToImage.toPng(node);
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = 'greeting-card.png';
+      link.click();
+    } catch (error) {
+      alert("❌ Failed to generate image.");
+      console.error(error);
+    }
   }
 </script>
 
@@ -121,25 +148,16 @@
 </script>
 
 <script>
-  async function downloadPaidCard() {
-    const node = document.getElementById('generatedCard') || document.querySelector('.card-preview');
+  window.addEventListener("DOMContentLoaded", () => {
+    const cardHTML = sessionStorage.getItem("cardHTML");
+    const cardTitle = sessionStorage.getItem("cardTitle");
 
-    if (!node) {
-      alert("Card not found on page.");
-      return;
+    if (cardHTML && cardTitle) {
+      document.getElementById("cardPreview").innerHTML = cardHTML;
+      document.getElementById("cardTitle").textContent = cardTitle;
+      document.getElementById("generatedCard").classList.remove("hidden");
     }
-
-    try {
-      const dataUrl = await htmlToImage.toPng(node);
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = 'greeting-card.png';
-      link.click();
-    } catch (error) {
-      alert("❌ Failed to generate image.");
-      console.error(error);
-    }
-  }
+  });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
