@@ -159,17 +159,25 @@
 
   // ✅ Auto-hide watermark if returning from Stripe with a paid session
   window.addEventListener("load", () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has("session_id")) {
-      const watermark = document.getElementById("cardWatermark");
-      if (watermark) {
-        watermark.style.opacity = "0";
-        setTimeout(() => {
-          watermark.style.display = "none";
-        }, 500);
-      }
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("session_id")) {
+    const watermark = document.getElementById("cardWatermark");
+    if (watermark) {
+      watermark.style.opacity = "0";
+      setTimeout(() => {
+        watermark.style.display = "none";
+      }, 500);
     }
-  });
+
+    // ✅ ADD THIS:
+    const downloadBtn = document.createElement('button');
+    downloadBtn.textContent = 'Download Your Card';
+    downloadBtn.className = 'mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded';
+    downloadBtn.onclick = downloadPaidCard;
+    document.getElementById('generatedCard').appendChild(downloadBtn);
+  }
+});
+
 </script>
 
 <section class="mt-12 text-center">
@@ -459,7 +467,41 @@ function filterCards(category) {
   cards.forEach(card => {
     const cat = card.dataset.category || '';
     card.style.display = (category === 'all' || cat.includes(category)) ? 'block' : 'none';
+
+async function downloadPaidCard() {
+  const tone = document.querySelector('input[name="tone"]').value.trim();
+  const occasion = document.querySelector('input[name="occasion"]').value.trim();
+  const cardText = document.getElementById('generatedPreview').innerText.trim();
+
+  if (!tone || !occasion || !cardText) {
+    alert('Missing card details. Please refresh and try again.');
+    return;
+  }
+
+  const prompt = `${tone} ${occasion}`;
+
+  const response = await fetch('/api/generateCard', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, cardText }),
+  });
+
+  if (!response.ok) {
+    alert('❌ Failed to generate full card.');
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'greeting-card.png';
+  link.click();
+}
+
   });
 }
-</script></body>
+</script>
+</body>
 </html>
