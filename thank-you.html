@@ -94,12 +94,22 @@
 
       const result = await response.json();
       if (result.success) {
-        // Remove watermark if it exists
-        const watermark = document.getElementById("cardWatermark");
-        if (watermark) {
-          watermark.style.display = "none";
-        }
-      } else {
+  // Remove watermark if it exists
+  const watermark = document.getElementById("cardWatermark");
+  if (watermark) {
+    watermark.style.display = "none";
+  }
+
+  // ✅ Inject the download button
+  const downloadBtn = document.createElement("button");
+  downloadBtn.textContent = "Download Your Card";
+  downloadBtn.className = "mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded";
+  downloadBtn.onclick = downloadPaidCard;
+
+  const container = document.querySelector(".thank-you-message") || document.body;
+  container.appendChild(downloadBtn);
+}
+ else {
         console.error("❌ Failed to send card:", result.error);
       }
     } catch (err) {
