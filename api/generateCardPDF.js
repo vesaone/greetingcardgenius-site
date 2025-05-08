@@ -88,15 +88,36 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
       borderWidth: 2
     });
 
-    const lines = font.splitTextIntoLines(messageText, fontSize, pageWidth - 2 * margin);
-    page.drawText(lines.join('\n'), {
-      x: margin,
-      y: pageHeight - margin - (imageUrl ? 320 : 40),
-      size: fontSize,
-      font,
-      color: rgb(0.1, 0.1, 0.1),
-      lineHeight: 20
-    });
+    const words = messageText.split(" ");
+let line = "";
+const lines = [];
+
+for (let i = 0; i < words.length; i++) {
+  const testLine = line + words[i] + " ";
+  const testWidth = font.widthOfTextAtSize(testLine.trim(), fontSize);
+
+  if (testWidth < pageWidth - 2 * margin) {
+    line = testLine;
+  } else {
+    lines.push(line.trim());
+    line = words[i] + " ";
+  }
+}
+if (line) lines.push(line.trim());
+
+// Draw wrapped lines
+let textY = pageHeight - margin - (imageUrl ? 320 : 40);
+for (const l of lines) {
+  page.drawText(l, {
+    x: margin,
+    y: textY,
+    size: fontSize,
+    font,
+    color: rgb(0.1, 0.1, 0.1)
+  });
+  textY -= fontSize + 4; // adjust line spacing
+}
+
 
     addWatermark(page);
   }
