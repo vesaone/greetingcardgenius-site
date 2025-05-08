@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   const pdfName = `card-${id}.pdf`;
-  const outputPath = path.join(__dirname, `../public/cards/generated/${pdfName}`);
+  const outputPath = `/tmp/card-preview-${id}.pdf`;
   const publicUrl = `/cards/generated/${pdfName}`;
 
   try {
@@ -27,6 +27,12 @@ export default async function handler(req, res) {
       layout,
       watermark
     });
+
+    const pdfBytes = await fs.readFile(outputPath);
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="card.pdf"`);
+      res.send(pdfBytes);
 
     return res.status(200).json({ success: true, cardUrl: publicUrl });
   } catch (err) {
