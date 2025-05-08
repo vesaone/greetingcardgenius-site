@@ -125,43 +125,70 @@ downloadBtn.onclick = downloadCard;
 
 <script>
   async function confirmAndSend() {
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("session_id");
-    if (!sessionId) return;
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get("session_id");
+  if (!sessionId) return;
 
-    try {
-      const response = await fetch("/api/confirm-stripe-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId })
-      });
+  try {
+    const response = await fetch("/api/confirm-stripe-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId })
+    });
 
-      const result = await response.json();
-      if (result.success) {
-  // Remove watermark if it exists
-  const watermark = document.getElementById("cardWatermark");
-  if (watermark) {
-    watermark.style.display = "none";
-  }
-
-  // ✅ Inject the download button
-  const downloadBtn = document.createElement("button");
-  downloadBtn.textContent = "Download Your Card";
-  downloadBtn.className = "mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded";
-  downloadBtn.onclick = downloadPaidCard;
-
-  const container = document.querySelector(".thank-you-message") || document.body;
-  container.appendChild(downloadBtn);
-}
- else {
-        console.error("❌ Failed to send card:", result.error);
+    const result = await response.json();
+    if (result.success) {
+      // ✅ Hide watermark
+      const watermark = document.getElementById("cardWatermark");
+      if (watermark) {
+        watermark.style.display = "none";
       }
-    } catch (err) {
-      console.error("❌ Error confirming session:", err);
-    }
-  }
 
-  confirmAndSend();
+      // ✅ Generate clean PDF (no watermark)
+      const imageUrl = sessionStorage.getItem("imageUrl");
+      const messageText = sessionStorage.getItem("cardPdfText");
+      const layout = sessionStorage.getItem("deliveryLayout") || "email";
+      const cleanId = `final-${Date.now()}`;
+
+      if (imageUrl && messageText) {
+        try {
+          const pdfRes = await fetch("/api/create-ai-card", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl,
+              messageText,
+              layout,
+              watermark: false,
+              id: cleanId
+            })
+          });
+
+          const data = await pdfRes.json();
+          if (data.success) {
+            sessionStorage.setItem("cardPdfUrl", data.cardUrl);
+          }
+        } catch (err) {
+          console.error("❌ PDF generation failed after payment", err);
+        }
+      }
+
+      // ✅ Show download button
+      const downloadBtn = document.createElement("button");
+      downloadBtn.textContent = "📥 Download Your Card";
+      downloadBtn.className = "mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded";
+      downloadBtn.onclick = downloadCard;
+
+      const container = document.querySelector(".thank-you-message") || document.body;
+      container.appendChild(downloadBtn);
+    } else {
+      console.error("❌ Failed to send card:", result.error);
+    }
+  } catch (err) {
+    console.error("❌ Error confirming session:", err);
+  }
+}
+
 </script>
 
 <script>

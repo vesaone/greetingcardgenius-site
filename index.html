@@ -61,42 +61,43 @@
   <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
   <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card. Pay only $1.99 to send it.</p>
 
-<form id="cardGenForm" class="space-y-4">
-  <div>
-    <label class="block font-medium">Tone or Vibe</label>
-    <input type="text" name="tone" class="border p-2 w-full rounded" required />
-  </div>
-  <div>
-    <label class="block font-medium">Occasion or Theme</label>
-    <input type="text" name="occasion" class="border p-2 w-full rounded" required />
-  </div>
-  <div>
-    <label class="block font-medium">Recipient</label>
-    <input type="text" name="recipient" class="border p-2 w-full rounded" required />
-  </div>
-  <div>
-    <label class="block font-medium">Your Name</label>
-    <input type="text" name="sender" class="border p-2 w-full rounded" required />
-  </div>
-  <div>
-    <label class="block font-medium">Recipient's Email</label>
-    <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
-  </div>
-  <div>
-    <label class="block font-medium">Extra Message (optional)</label>
-    <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
-  </div>
+  <form id="cardGenForm" class="space-y-4">
+    <div>
+      <label class="block font-medium">Tone or Vibe</label>
+      <input type="text" name="tone" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Occasion or Theme</label>
+      <input type="text" name="occasion" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Recipient</label>
+      <input type="text" name="recipient" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Your Name</label>
+      <input type="text" name="sender" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Recipient's Email</label>
+      <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
+    </div>
+    <div>
+      <label class="block font-medium">Extra Message (optional)</label>
+      <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
+    </div>
 
-  <!-- ✅ AI Image + PDF Upsell Checkbox -->
-  <div class="flex items-center space-x-2">
-    <input type="checkbox" id="usePdfImage" class="w-5 h-5">
-    <label for="usePdfImage" class="text-sm text-gray-800">
-      Add AI image + printable PDF (upgrade)
-    </label>
-  </div>
+    <!-- ✅ AI Image + PDF Upsell Checkbox -->
+    <div class="flex items-center space-x-2">
+      <input type="checkbox" id="usePdfImage" class="w-5 h-5">
+      <label for="usePdfImage" class="text-sm text-gray-800">
+        Add AI image + printable PDF (upgrade)
+      </label>
+    </div>
 
-  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
-</form>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
+  </form>
+</section>
 
 
   <div id="generatedCard" class="mt-6 hidden relative bg-blue-50 p-4 rounded shadow text-left">
@@ -401,10 +402,21 @@
     });
   }
 
+  // ⚠️ 1.5. Inject dynamic disclaimer under recipientEmail input
+  window.addEventListener("DOMContentLoaded", () => {
+    const emailInput = document.querySelector('input[name="recipientEmail"]');
+    if (emailInput) {
+      const disclaimer = document.createElement("p");
+      disclaimer.className = "text-xs text-gray-500 mt-2 italic";
+      disclaimer.innerHTML = "📌 Want to print or save this card for yourself? Enter your own email above instead of the recipient’s.";
+      emailInput.parentElement.appendChild(disclaimer);
+    }
+  });
+
   // 🟠 2. Variables and Generate Card logic
   let generatedCardData = {};
 
-  document.getElementById("cardGenForm").addEventListener("submit", async function(e) {
+  document.getElementById("cardGenForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const tone = e.target.tone.value;
@@ -413,11 +425,10 @@
     const sender = e.target.sender.value;
     const recipientEmail = e.target.recipientEmail.value;
     const customMessage = e.target.customMessage.value;
-
-    // 🔁 Optional upsell: check if AI image + PDF was selected
     const usePdfImage = document.getElementById("usePdfImage")?.checked || false;
 
     try {
+      // 🔵 Step 1: Generate Text
       const response = await fetch("/api/generate-card", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -425,6 +436,9 @@
       });
 
       const data = await response.json();
+      if (!data || !data.html) throw new Error("Missing card data");
+
+      // ✅ Render text card immediately
       document.getElementById("generatedTitle").textContent = data.title;
       document.getElementById("generatedPreview").innerHTML = data.html;
       document.getElementById("generatedCard").classList.remove("hidden");
@@ -437,26 +451,81 @@
         customMessage
       };
 
-      // 🖼️ + 📝 If user selected image+PDF, trigger additional generation
-      if (usePdfImage && data.imageUrl && data.plainText) {
-        const pdfResponse = await fetch("/api/create-ai-card", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            imageUrl: data.imageUrl,
-            messageText: data.plainText
-          })
-        });
+      // 🟡 Step 2: Show loader and start image gen
+      if (usePdfImage) {
+        const imgContainer = document.createElement("div");
+        imgContainer.id = "aiImageBox";
+        imgContainer.innerHTML = `
+          <div class="mt-4 text-sm text-gray-600">🌀 Generating AI image...</div>
+        `;
+        document.getElementById("generatedCard").appendChild(imgContainer);
 
-        const pdfData = await pdfResponse.json();
-        if (pdfData.success) {
-          sessionStorage.setItem("cardFormat", "pdf");
-          sessionStorage.setItem("cardPdfUrl", pdfData.cardUrl);
+        const imgPrompt = `${tone} ${occasion} greeting card, artistic style, clean background`;
+
+        try {
+          const imgRes = await fetch("/api/generate-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: imgPrompt })
+          });
+
+          const imgData = await imgRes.json();
+          if (imgData && imgData.imageUrl) {
+            sessionStorage.setItem("imageUrl", imgData.imageUrl);
+            const imageEl = document.createElement("img");
+            imageEl.src = imgData.imageUrl;
+            imageEl.alt = "Generated card image";
+            imageEl.className = "mt-4 rounded shadow max-w-xs mx-auto";
+
+            imgContainer.innerHTML = ""; // remove loader
+            imgContainer.appendChild(imageEl);
+          } else {
+            imgContainer.innerHTML = `<div class="mt-4 text-red-600 text-sm">❌ Failed to generate image.</div>`;
+          }
+        } catch (err) {
+          console.error("Image gen failed:", err);
+          imgContainer.innerHTML = `<div class="mt-4 text-red-600 text-sm">❌ Image generation error.</div>`;
+        }
+
+        // 💾 Save text + layout
+        sessionStorage.setItem("cardFormat", "pdf");
+        sessionStorage.setItem("cardPdfText", data.plainText || "");
+        sessionStorage.setItem("deliveryLayout", "email");
+
+        // 🧠 Generate PREVIEW PDF
+        const id = `preview-${Date.now()}`;
+        try {
+          const previewRes = await fetch("/api/create-ai-card", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl: sessionStorage.getItem("imageUrl"),
+              messageText: sessionStorage.getItem("cardPdfText"),
+              layout: "email",
+              watermark: true,
+              id
+            })
+          });
+
+          const previewData = await previewRes.json();
+          if (previewData.success) {
+            sessionStorage.setItem("previewPdfUrl", previewData.cardUrl);
+
+            // Optional: Show preview iframe (if added in HTML)
+            const iframe = document.getElementById("pdfPreviewFrame");
+            if (iframe) {
+              iframe.src = previewData.cardUrl;
+              iframe.classList.remove("hidden");
+            }
+          }
+        } catch (err) {
+          console.error("❌ Failed to generate preview PDF", err);
         }
       }
 
     } catch (err) {
       alert("❌ Failed to generate card. Please try again.");
+      console.error(err);
     }
   });
 
@@ -480,6 +549,8 @@
     }
   }
 </script>
+
+
 
 
 </body>
