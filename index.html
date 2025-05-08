@@ -20,6 +20,13 @@
 <meta content="https://www.greetingcardgenius.com.au/assets/og-card-preview.jpg" name="twitter:image"/>
 <link href="/assets/favicon.jpg" rel="icon" type="image/jpeg"/>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<style>
+  .no-copy {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+</style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 <header class="bg-white p-6 shadow text-center border-b">
@@ -42,7 +49,6 @@
 <h1 class="text-4xl font-bold text-blue-800 mb-2">📬 Send AI-Generated Cards Instantly</h1>
 <p class="text-lg text-gray-700 mb-6">Over <strong>250+</strong> hilarious, heartfelt, savage and sweet cards ready to send!<br/> 💡 <em>Or build your own with our AI Card Generator</em></p>
 </section>
-
 <section id="generator" class="mt-16 bg-white p-6 rounded shadow max-w-3xl mx-auto">
   <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
   <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card. Pay only $1.99 to send it.</p>
@@ -85,13 +91,12 @@
   </form>
 </section>
 
-
   <div id="generatedCard" class="mt-6 hidden relative bg-blue-50 p-4 rounded shadow text-left">
     <div id="cardWatermark" class="absolute inset-0 flex items-center justify-center bg-white/80 text-xl font-bold text-red-600 z-10 pointer-events-none">
       🔒 Not Sent – Purchase to Send
     </div>
     <h3 class="font-bold text-xl mb-2" id="generatedTitle"></h3>
-    <div id="generatedPreview" class="bg-white p-4 rounded border border-blue-300 shadow-md"></div>
+    <div id="generatedPreview" class="no-copy bg-white p-4 rounded border border-blue-300 shadow-md"></div>
     <button onclick="buyCard()" class="mt-4 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Buy & Send for $1.99</button>
     <p id="sendStatus" class="mt-2 text-sm text-gray-600"></p>
   </div>

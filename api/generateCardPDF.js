@@ -12,6 +12,29 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontSize = 14;
 
+  const sanitizeText = (text) =>
+    text.replace(/\n/g, " ").replace(/[^\x00-\x7F]/g, "");
+
+  const wrapText = (text, maxWidth) => {
+    const words = sanitizeText(text).split(" ");
+    let line = "";
+    const lines = [];
+
+    for (let word of words) {
+      const testLine = line + word + " ";
+      const width = font.widthOfTextAtSize(testLine.trim(), fontSize);
+
+      if (width < maxWidth) {
+        line = testLine;
+      } else {
+        lines.push(line.trim());
+        line = word + " ";
+      }
+    }
+    if (line) lines.push(line.trim());
+    return lines;
+  };
+
   const addWatermark = (page) => {
     if (watermark) {
       page.drawText('PREVIEW ONLY — Purchase to Send', {
@@ -25,12 +48,14 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
   };
 
   if (layout === 'print') {
-    // Front cover (image + logo)
+    // FRONT: image + logo
     const frontPage = pdfDoc.addPage([pageWidth, pageHeight]);
+
     if (imageUrl) {
       const imageBytes = await fetch(imageUrl).then(res => res.arrayBuffer());
       const embeddedImage = await pdfDoc.embedJpg(imageBytes);
       const imgDims = embeddedImage.scaleToFit(pageWidth - 2 * margin, pageHeight - 2 * margin);
+
       frontPage.drawImage(embeddedImage, {
         x: (pageWidth - imgDims.width) / 2,
         y: (pageHeight - imgDims.height) / 2,
@@ -39,7 +64,6 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
       });
     }
 
-    // Logo + site footer
     frontPage.drawText('greetingcardgenius.com', {
       x: margin,
       y: 20,
@@ -49,17 +73,21 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
 
     addWatermark(frontPage);
 
-    // Inside page with message
+    // INSIDE: message
     const messagePage = pdfDoc.addPage([pageWidth, pageHeight]);
-    const lines = font.splitTextIntoLines(messageText, fontSize, pageWidth - 2 * margin);
-    messagePage.drawText(lines.join('\n'), {
-      x: margin,
-      y: pageHeight - margin - fontSize,
-      size: fontSize,
-      font,
-      color: rgb(0.1, 0.1, 0.1),
-      lineHeight: 20
-    });
+    const lines = wrapText(messageText, pageWidth - 2 * margin);
+    let y = pageHeight - margin - 40;
+
+    for (const l of lines) {
+      messagePage.drawText(l, {
+        x: margin,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(0.1, 0.1, 0.1)
+      });
+      y -= fontSize + 4;
+    }
 
     addWatermark(messagePage);
   } else {
@@ -70,6 +98,7 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
       const imageBytes = await fetch(imageUrl).then(res => res.arrayBuffer());
       const embeddedImage = await pdfDoc.embedJpg(imageBytes);
       const imgDims = embeddedImage.scaleToFit(pageWidth - 2 * margin, 300);
+
       page.drawImage(embeddedImage, {
         x: margin,
         y: pageHeight - margin - imgDims.height,
@@ -78,7 +107,7 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
       });
     }
 
-    // Decorative border (email layout only)
+    // Decorative border
     page.drawRectangle({
       x: 20,
       y: 20,
@@ -88,36 +117,19 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
       borderWidth: 2
     });
 
-    const words = messageText.split(" ");
-let line = "";
-const lines = [];
+    const lines = wrapText(messageText, pageWidth - 2 * margin);
+    let y = pageHeight - margin - (imageUrl ? 320 : 40);
 
-for (let i = 0; i < words.length; i++) {
-  const testLine = line + words[i] + " ";
-  const testWidth = font.widthOfTextAtSize(testLine.trim(), fontSize);
-
-  if (testWidth < pageWidth - 2 * margin) {
-    line = testLine;
-  } else {
-    lines.push(line.trim());
-    line = words[i] + " ";
-  }
-}
-if (line) lines.push(line.trim());
-
-// Draw wrapped lines
-let textY = pageHeight - margin - (imageUrl ? 320 : 40);
-for (const l of lines) {
-  page.drawText(l, {
-    x: margin,
-    y: textY,
-    size: fontSize,
-    font,
-    color: rgb(0.1, 0.1, 0.1)
-  });
-  textY -= fontSize + 4; // adjust line spacing
-}
-
+    for (const l of lines) {
+      page.drawText(l, {
+        x: margin,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(0.1, 0.1, 0.1)
+      });
+      y -= fontSize + 4;
+    }
 
     addWatermark(page);
   }
