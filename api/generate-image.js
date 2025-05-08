@@ -5,7 +5,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt } = req.body;
+  let { prompt } = req.body;
+
+  prompt = `Greeting card artwork: ${prompt}. Soft edges, minimal clutter, artistic, printable, no text overlay.`;
+  
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   if (!OPENAI_API_KEY) {

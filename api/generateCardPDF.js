@@ -135,5 +135,5 @@ export async function generateCardPDF({ imageUrl, messageText, outputPath, layou
   }
 
   const pdfBytes = await pdfDoc.save();
-  await fs.writeFile(outputPath, pdfBytes);
+return pdfBytes; // just return the buffer to the caller
 }

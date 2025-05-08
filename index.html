@@ -470,14 +470,12 @@
         `;
         document.getElementById("generatedCard").appendChild(imgContainer);
 
-        const imgPrompt = `${tone} ${occasion} greeting card, artistic style, clean background`;
+        const imgRes = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tone, occasion })
+    });
 
-        try {
-          const imgRes = await fetch("/api/generate-image", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: imgPrompt })
-          });
 
           const imgData = await imgRes.json();
           if (imgData && imgData.imageUrl) {

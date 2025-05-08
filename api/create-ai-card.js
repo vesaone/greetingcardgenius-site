@@ -1,5 +1,3 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { generateCardPDF } from './generateCardPDF.js';
 
 export default async function handler(req, res) {
@@ -7,36 +5,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { imageUrl, messageText, layout = 'email', watermark = false, id } = req.body;
+  const { imageUrl, messageText, layout = 'email', watermark = false } = req.body;
 
-  if (!messageText || !id) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  if (!messageText) {
+    return res.status(400).json({ error: 'Missing messageText' });
   }
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const pdfName = `card-${id}.pdf`;
-  const outputPath = `/tmp/card-preview-${id}.pdf`;
-  const publicUrl = `/cards/generated/${pdfName}`;
-
   try {
-    await generateCardPDF({
+    const pdfBytes = await generateCardPDF({
       imageUrl,
       messageText,
-      outputPath,
       layout,
       watermark
     });
 
-    const pdfBytes = await fs.readFile(outputPath);
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename="card.pdf"`);
-      res.send(pdfBytes);
-
-    return res.status(200).json({ success: true, cardUrl: publicUrl });
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="preview.pdf"`);
+    res.status(200).send(pdfBytes);
   } catch (err) {
     console.error("❌ PDF generation failed:", err);
-    return res.status(500).json({ success: false, error: 'PDF generation error' });
+    res.status(500).json({ error: "PDF generation error" });
   }
 }
