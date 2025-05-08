@@ -59,7 +59,7 @@
   <h2 id="cardTitle" class="text-xl font-bold mb-2"></h2>
   <div id="cardPreview"></div>
 </div>
-
+downloadBtn.onclick = downloadCard;
   </div>
 </main>
 
@@ -85,9 +85,26 @@
 </script>
 
 <script>
-  async function downloadPaidCard() {
-    const node = document.getElementById('generatedCard') || document.querySelector('.card-preview');
+  async function downloadCard() {
+    const isPDF = sessionStorage.getItem("cardFormat") === "pdf";
+    const pdfUrl = sessionStorage.getItem("cardPdfUrl");
 
+    if (isPDF && pdfUrl) {
+      // Download PDF version
+      try {
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'greeting-card.pdf';
+        link.click();
+      } catch (err) {
+        alert("❌ Failed to download PDF.");
+        console.error(err);
+      }
+      return;
+    }
+
+    // Fallback: HTML-based PNG download
+    const node = document.getElementById('generatedCard') || document.querySelector('.card-preview');
     if (!node) {
       alert("Card not found on page.");
       return;
@@ -100,7 +117,7 @@
       link.download = 'greeting-card.png';
       link.click();
     } catch (error) {
-      alert("❌ Failed to generate image.");
+      alert("❌ Failed to generate image from HTML.");
       console.error(error);
     }
   }

@@ -61,33 +61,43 @@
   <h2 class="text-2xl font-bold text-blue-800 mb-4">🧠 AI Card Generator</h2>
   <p class="mb-4 text-gray-700">Generate a one-of-a-kind greeting card. Pay only $1.99 to send it.</p>
 
-  <form id="cardGenForm" class="space-y-4">
-    <div>
-      <label class="block font-medium">Tone or Vibe</label>
-      <input type="text" name="tone" class="border p-2 w-full rounded" required />
-    </div>
-    <div>
-      <label class="block font-medium">Occasion or Theme</label>
-      <input type="text" name="occasion" class="border p-2 w-full rounded" required />
-    </div>
-    <div>
-      <label class="block font-medium">Recipient</label>
-      <input type="text" name="recipient" class="border p-2 w-full rounded" required />
-    </div>
-    <div>
-      <label class="block font-medium">Your Name</label>
-      <input type="text" name="sender" class="border p-2 w-full rounded" required />
-    </div>
-    <div>
-      <label class="block font-medium">Recipient's Email</label>
-      <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
-    </div>
-    <div>
-      <label class="block font-medium">Extra Message (optional)</label>
-      <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
-    </div>
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
-  </form>
+<form id="cardGenForm" class="space-y-4">
+  <div>
+    <label class="block font-medium">Tone or Vibe</label>
+    <input type="text" name="tone" class="border p-2 w-full rounded" required />
+  </div>
+  <div>
+    <label class="block font-medium">Occasion or Theme</label>
+    <input type="text" name="occasion" class="border p-2 w-full rounded" required />
+  </div>
+  <div>
+    <label class="block font-medium">Recipient</label>
+    <input type="text" name="recipient" class="border p-2 w-full rounded" required />
+  </div>
+  <div>
+    <label class="block font-medium">Your Name</label>
+    <input type="text" name="sender" class="border p-2 w-full rounded" required />
+  </div>
+  <div>
+    <label class="block font-medium">Recipient's Email</label>
+    <input type="email" name="recipientEmail" class="border p-2 w-full rounded" required />
+  </div>
+  <div>
+    <label class="block font-medium">Extra Message (optional)</label>
+    <textarea name="customMessage" rows="3" class="border p-2 w-full rounded"></textarea>
+  </div>
+
+  <!-- ✅ AI Image + PDF Upsell Checkbox -->
+  <div class="flex items-center space-x-2">
+    <input type="checkbox" id="usePdfImage" class="w-5 h-5">
+    <label for="usePdfImage" class="text-sm text-gray-800">
+      Add AI image + printable PDF (upgrade)
+    </label>
+  </div>
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate Card</button>
+</form>
+
 
   <div id="generatedCard" class="mt-6 hidden relative bg-blue-50 p-4 rounded shadow text-left">
     <div id="cardWatermark" class="absolute inset-0 flex items-center justify-center bg-white/80 text-xl font-bold text-red-600 z-10 pointer-events-none">
@@ -99,86 +109,6 @@
     <p id="sendStatus" class="mt-2 text-sm text-gray-600"></p>
   </div>
 </section>
-
-<script>
-  let generatedCardData = {};
-
-  document.getElementById("cardGenForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const tone = e.target.tone.value;
-    const occasion = e.target.occasion.value;
-    const recipient = e.target.recipient.value;
-    const sender = e.target.sender.value;
-    const recipientEmail = e.target.recipientEmail.value;
-    const customMessage = e.target.customMessage.value;
-
-    try {
-      const response = await fetch("/api/generate-card", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tone, occasion, recipient, sender, customMessage })
-      });
-
-      const data = await response.json();
-      document.getElementById("generatedTitle").textContent = data.title;
-      document.getElementById("generatedPreview").innerHTML = data.html;
-      document.getElementById("generatedCard").classList.remove("hidden");
-
-      generatedCardData = {
-        toEmail: recipientEmail,
-        subject: data.title,
-        html: data.html,
-        senderName: sender,
-        customMessage
-      };
-    } catch (err) {
-      alert("❌ Failed to generate card. Please try again.");
-    }
-  });
-
-  async function buyCard() {
-  try {
-    const response = await fetch("/api/create-stripe-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(generatedCardData)
-    });
-
-    const data = await response.json();
-    if (data.payment_url) {  // ✅ CHECK FOR THE CORRECT KEY
-      window.location.href = data.payment_url;
-    } else {
-      document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
-    }
-  } catch (err) {
-    document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
-  }
-}
-
-
-  // ✅ Auto-hide watermark if returning from Stripe with a paid session
-  window.addEventListener("load", () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.has("session_id")) {
-    const watermark = document.getElementById("cardWatermark");
-    if (watermark) {
-      watermark.style.opacity = "0";
-      setTimeout(() => {
-        watermark.style.display = "none";
-      }, 500);
-    }
-
-    // ✅ ADD THIS:
-    const downloadBtn = document.createElement('button');
-    downloadBtn.textContent = 'Download Your Card';
-    downloadBtn.className = 'mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded';
-    downloadBtn.onclick = downloadPaidCard;
-    document.getElementById('generatedCard').appendChild(downloadBtn);
-  }
-});
-
-</script>
 
 <section class="mt-12 text-center">
   <h2 class="text-2xl font-semibold mb-2">Need Something Custom?</h2>
@@ -462,46 +392,95 @@
 </div>
 </footer>
 <script>
-function filterCards(category) {
-  const cards = document.querySelectorAll('#all-cards .grid a');
-  cards.forEach(card => {
-    const cat = card.dataset.category || '';
-    card.style.display = (category === 'all' || cat.includes(category)) ? 'block' : 'none';
-
-async function downloadPaidCard() {
-  const tone = document.querySelector('input[name="tone"]').value.trim();
-  const occasion = document.querySelector('input[name="occasion"]').value.trim();
-  const cardText = document.getElementById('generatedPreview').innerText.trim();
-
-  if (!tone || !occasion || !cardText) {
-    alert('Missing card details. Please refresh and try again.');
-    return;
+  // 🔵 1. Filter cards by category (existing feature)
+  function filterCards(category) {
+    const cards = document.querySelectorAll('#all-cards .grid a');
+    cards.forEach(card => {
+      const cat = card.dataset.category || '';
+      card.style.display = (category === 'all' || cat.includes(category)) ? 'block' : 'none';
+    });
   }
 
-  const prompt = `${tone} ${occasion}`;
+  // 🟠 2. Variables and Generate Card logic
+  let generatedCardData = {};
 
-  const response = await fetch('/api/generateCard', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, cardText }),
+  document.getElementById("cardGenForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const tone = e.target.tone.value;
+    const occasion = e.target.occasion.value;
+    const recipient = e.target.recipient.value;
+    const sender = e.target.sender.value;
+    const recipientEmail = e.target.recipientEmail.value;
+    const customMessage = e.target.customMessage.value;
+
+    // 🔁 Optional upsell: check if AI image + PDF was selected
+    const usePdfImage = document.getElementById("usePdfImage")?.checked || false;
+
+    try {
+      const response = await fetch("/api/generate-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tone, occasion, recipient, sender, customMessage })
+      });
+
+      const data = await response.json();
+      document.getElementById("generatedTitle").textContent = data.title;
+      document.getElementById("generatedPreview").innerHTML = data.html;
+      document.getElementById("generatedCard").classList.remove("hidden");
+
+      generatedCardData = {
+        toEmail: recipientEmail,
+        subject: data.title,
+        html: data.html,
+        senderName: sender,
+        customMessage
+      };
+
+      // 🖼️ + 📝 If user selected image+PDF, trigger additional generation
+      if (usePdfImage && data.imageUrl && data.plainText) {
+        const pdfResponse = await fetch("/api/create-ai-card", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageUrl: data.imageUrl,
+            messageText: data.plainText
+          })
+        });
+
+        const pdfData = await pdfResponse.json();
+        if (pdfData.success) {
+          sessionStorage.setItem("cardFormat", "pdf");
+          sessionStorage.setItem("cardPdfUrl", pdfData.cardUrl);
+        }
+      }
+
+    } catch (err) {
+      alert("❌ Failed to generate card. Please try again.");
+    }
   });
 
-  if (!response.ok) {
-    alert('❌ Failed to generate full card.');
-    return;
+  // 🟣 3. Handle Stripe checkout (buy card)
+  async function buyCard() {
+    try {
+      const response = await fetch("/api/create-stripe-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(generatedCardData)
+      });
+
+      const data = await response.json();
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        document.getElementById("sendStatus").textContent = "❌ Could not start checkout.";
+      }
+    } catch (err) {
+      document.getElementById("sendStatus").textContent = "❌ Failed to connect to Stripe.";
+    }
   }
-
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'greeting-card.png';
-  link.click();
-}
-
-  });
-}
 </script>
+
+
 </body>
 </html>

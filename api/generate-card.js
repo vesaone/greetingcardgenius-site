@@ -1,4 +1,5 @@
 import { OpenAI } from "openai";
+import fetch from "node-fetch";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -16,12 +17,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const systemPrompt = `
+    const systemPrompt = \`
 You are a creative AI that writes emotionally charged or hilarious HTML greeting cards.
 Only respond with a JSON object in this format:
 {
   "title": "Card Title",
-  "body": "<div style='background:#fffbe6;padding:20px;border-radius:10px;font-family:sans-serif;color:#222'> ... </div>"
+  "body": "<div style='...'> ... </div>"
 }
 
 Requirements:
@@ -37,19 +38,19 @@ Rules:
 - Do NOT include Markdown or code fences.
 - Respond with valid JSON only.
 - Allow playful emojis if appropriate for the tone.
-`;
+\`;
 
-    const userPrompt = `
+    const userPrompt = \`
 Write a greeting card for the following:
 
-Occasion/Theme: ${occasion}
-Tone/Vibe: ${tone}
-Recipient: ${recipient}
-Sender: ${sender}
-Extra Message: ${customMessage || '[none]'}
+Occasion/Theme: \${occasion}
+Tone/Vibe: \${tone}
+Recipient: \${recipient}
+Sender: \${sender}
+Extra Message: \${customMessage || '[none]'}
 
 Make it dramatic, weird, sweet, savage, or funny — depending on the tone. Be bold. Match the mood. Always include closing with the sender name and footer.
-`;
+\`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -70,14 +71,60 @@ Make it dramatic, weird, sweet, savage, or funny — depending on the tone. Be b
 
     const footer = "<small style='color:gray;'>Sent via Greeting Card Genius</small>";
     let html = parsed.body;
+
     if (!html.includes(footer)) {
-      html += `<br />${footer}`;
-    }
-    if (!html.toLowerCase().includes(sender.toLowerCase())) {
-      html += `<br /><p style='font-style:italic;'>– ${sender}</p>`;
+      html += `<br />\${footer}`;
     }
 
-    return res.status(200).json({ title: parsed.title, html });
+    if (!html.toLowerCase().includes(sender.toLowerCase())) {
+      html += `<br /><p style='font-style:italic;'>– \${sender}</p>`;
+    }
+
+    const styledHtml = \`
+      <div id="generatedCard" style="
+        font-family: 'Segoe UI', sans-serif;
+        background: #fffbe6;
+        padding: 24px;
+        border-radius: 10px;
+        border: 1px solid #fcd34d;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        max-width: 420px;
+        margin: auto;
+        color: #333;
+        text-align: left;
+      ">
+        \${html}
+      </div>
+    \`;
+
+    // 🔁 Generate image from OpenAI based on prompt
+    let imageUrl = "";
+    try {
+      const imageRes = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Authorization": \`Bearer \${process.env.OPENAI_API_KEY}\`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: \`\${tone} \${occasion} card, artistic style, clean background\`,
+          n: 1,
+          size: "1024x1024"
+        })
+      });
+
+      const imageJson = await imageRes.json();
+      imageUrl = imageJson?.data?.[0]?.url || "";
+    } catch (err) {
+      console.warn("Image generation failed:", err);
+    }
+
+    return res.status(200).json({
+      title: parsed.title,
+      html: styledHtml,
+      plainText: html.replace(/<[^>]+>/g, ''),
+      imageUrl
+    });
 
   } catch (error) {
     console.error("OpenAI Error:", error);
