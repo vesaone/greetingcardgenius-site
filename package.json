@@ -5,10 +5,11 @@
   "dependencies": {
     "micro": "^10.0.1",
     "node-fetch": "^2.7.0",
+    "openai": "^4.19.0",
+    "pdf-lib": "^1.17.1",
     "puppeteer": "^24.6.1",
     "resend": "^4.3.0",
-    "stripe": "^18.0.0",
-    "openai": "^4.19.0"
+    "stripe": "^18.0.0"
   },
   "main": "index.js",
   "scripts": {
